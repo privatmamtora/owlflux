@@ -1,7 +1,30 @@
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+
+const tab = 'Main';
+const items = ['Main', 'Appearance'];
+const text = "Hello"
+
+const tabs = [
+        { id: 1, name: "Core", route: `/settings` },
+        { id: 2, name: "Appearance", route: `/settings/appearance` }
+      ]
+
+</script>
+
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <v-app-bar density="compact">  
+    <v-btn icon to="/">      
+    <v-icon>mdi-arrow-left</v-icon>
+  </v-btn>
+    <v-toolbar-title>Settings</v-toolbar-title>
+    </v-app-bar>
+  <v-main>
+    <v-tabs grow>
+      <v-tab v-for="tab of tabs" :key="tab.id" :to="tab.route">{{ tab.name}}</v-tab>
+    </v-tabs>
+    <RouterView/>
+  </v-main>
 </template>
 
 <style>

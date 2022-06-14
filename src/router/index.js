@@ -21,7 +21,17 @@ const router = createRouter({
       component: () => import('../views/SettingsView.vue'),
       meta: {
         title: "Settings"
-      }
+      },
+      children: [
+        {
+          path: '',
+          component: () => import('../views/Settings-Core.vue'),
+        },
+        {
+          path: 'appearance',
+          component: () => import('../views/Settings-Appearance.vue'),
+        }
+      ]
     }
   ]
 })
