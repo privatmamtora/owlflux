@@ -1,5 +1,4 @@
 <script setup>
-import TheWelcome from '@/components/TheWelcome.vue'
 import { Splitpanes, Pane } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
 
@@ -40,7 +39,6 @@ const items = [
 </script>
 
 <template>
-    <!-- <TheWelcome /> -->
     <v-navigation-drawer v-model="drawer" app>
       <v-list-item>
         <v-list-item-title>OwlFlux</v-list-item-title>
