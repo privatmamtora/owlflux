@@ -1,6 +1,11 @@
-# owlflux2
+# owlflux
 
-This template should help get you started developing with Vue 3 in Vite.
+An opinionated UI for Miniflux
+I am currently moving from RSSOwlnix to miniflux and have several features that I am looking for.
+I have taken a look at `reminiflux` for inspiration.
+
+*Note: Currently a learning project for the developer. All tips and suggestions welcome. (Including contributions)
+
 
 ## Recommended IDE Setup
 
