@@ -26,10 +26,16 @@ const router = createRouter({
         {
           path: '',
           component: () => import('../views/Settings-Core.vue'),
+          meta: {
+            title: "Core - Settings"
+          }
         },
         {
           path: 'appearance',
           component: () => import('../views/Settings-Appearance.vue'),
+          meta: {
+            title: "Appearance - Settings"
+          }
         }
       ]
     }
