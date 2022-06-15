@@ -1,10 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 
-const tab = 'Main';
-const items = ['Main', 'Appearance'];
-const text = "Hello"
-
 const tabs = [
         { id: 1, name: "Core", route: `/settings` },
         { id: 2, name: "Appearance", route: `/settings/appearance` }
