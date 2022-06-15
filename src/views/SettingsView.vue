@@ -9,7 +9,7 @@ const tabs = [
 </script>
 
 <template>
-  <v-app-bar density="compact">  
+  <v-app-bar color="primary" density="compact">  
     <v-btn icon to="/">      
     <v-icon>mdi-arrow-left</v-icon>
   </v-btn>
