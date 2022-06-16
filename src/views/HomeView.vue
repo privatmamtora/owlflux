@@ -1,6 +1,7 @@
 <script setup>
-import { Splitpanes, Pane } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
+import { Splitpanes, Pane } from 'splitpanes'
+import { watch, ref } from 'vue'
 
 const items = [
       {
@@ -20,22 +21,14 @@ const items = [
         value: 'buzz',
       }
 ];
+let drawer = ref(false);
+let group = ref(null);
+watch(group, () => drawer.value = false);
 
-</script>
+let showError = false;
+let errorType = "";
+let errorText = "";
 
-<script>
-  export default {
-    data: () => ({
-      drawer: false,
-      group: null,
-    }),
-
-    watch: {
-      group () {
-        this.drawer = false
-      },
-    },
-  }
 </script>
 
 <template>
@@ -50,11 +43,10 @@ const items = [
         :items="items"
       ></v-list>
     </v-navigation-drawer>
-    <v-app-bar density="compact">      
+    <v-app-bar density="compact">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>My files</v-toolbar-title>
     </v-app-bar>
-
     <v-main>
       <Splitpanes class="default-theme">
         <Pane min-size="30">
