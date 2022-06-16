@@ -1,11 +1,9 @@
 <script setup>
-import { watch, reactive } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSettingsStore } from '../stores/settings'
 
-let settings = reactive(JSON.parse(localStorage.getItem('settings') || '{}'));
-
-watch(settings, async(newData) => {
-  localStorage.setItem('settings', JSON.stringify(newData));
-})
+const settingsStore = useSettingsStore();
+let { settings } = storeToRefs(settingsStore);
 
 </script>
 

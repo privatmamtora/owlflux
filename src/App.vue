@@ -1,14 +1,15 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { useThemeStore } from './stores/theme'
+import { useSettingsStore } from './stores/settings'
 
-const themeStore = useThemeStore();
+const settingsStore = useSettingsStore();
+
 </script>
 
 <template>
-  <v-theme-provider :theme="themeStore.themeColor" with-background>
+  <v-theme-provider :theme="settingsStore.settings.theme" with-background>
     <v-app>
       <RouterView />
     </v-app>
-</v-theme-provider>
+  </v-theme-provider>
 </template>

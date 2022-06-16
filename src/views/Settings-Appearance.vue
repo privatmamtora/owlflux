@@ -1,16 +1,16 @@
 <script setup>
 import { watch, reactive, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useThemeStore } from '../stores/theme'
-const themeStore = useThemeStore();
-let { themeColor } = storeToRefs(themeStore);
+import { useSettingsStore } from '../stores/settings'
+const settingsStore = useSettingsStore();
+let { settings } = storeToRefs(settingsStore);
 
-let darkMode = ref(themeColor.value === 'dark' ? true : false);
+let darkMode = ref(settings.value.theme === 'dark' ? true : false);
 watch(darkMode, async(newData) => {
   if(newData) {
-    themeColor.value = 'dark';
+    settings.value.theme = 'dark';
   } else {
-    themeColor.value = 'light';
+    settings.value.theme = 'light';
   }
 })
 
