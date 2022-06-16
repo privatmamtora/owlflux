@@ -20,4 +20,8 @@ let { settings } = storeToRefs(settingsStore);
       shaped
       v-model="settings.key"></v-text-field>
   </v-container>
+  <v-container>
+    <div>{{settings.host}}</div>
+    <div>{{settings.key}}</div>    
+  </v-container>
 </template>
