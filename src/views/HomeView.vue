@@ -6,6 +6,8 @@ import { watch, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 
+import { MinifluxApi } from '../util/miniflux';
+
 const settingsStore = useSettingsStore();
 let { settings } = storeToRefs(settingsStore);
 
@@ -31,16 +33,24 @@ let drawer = ref(false);
 let group = ref(null);
 watch(group, () => drawer.value = false);
 
-let showError = false;
-let errorType = "";
-let errorText = "";
+let showError = ref(false);
+let errorType = ref("");
+let errorText = ref("");
 
-if (!settings.value.host || !settings.value.key) {
-  showError = true;
-  errorType = "Configuration Error";
-  errorText = "Both Host and API Key Required in Settings"
+let navData = ref({});
+
+const init = async () => {
+  try {
+    const miniflux = new MinifluxApi(settings.value.host, settings.value.key);
+    console.log(await miniflux.get_feeds());
+  } catch (e) {
+    showError.value = true;
+    errorType.value = e.title;
+    errorText.value = e.message;
+    console.log(e);
+  }
 }
-
+init();
 </script>
 
 <template>
