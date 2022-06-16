@@ -3,6 +3,12 @@ import 'splitpanes/dist/splitpanes.css'
 import { Splitpanes, Pane } from 'splitpanes'
 import { watch, ref } from 'vue'
 
+import { storeToRefs } from 'pinia'
+import { useSettingsStore } from '../stores/settings'
+
+const settingsStore = useSettingsStore();
+let { settings } = storeToRefs(settingsStore);
+
 const items = [
       {
         title: 'Foo',
@@ -29,6 +35,12 @@ let showError = false;
 let errorType = "";
 let errorText = "";
 
+if (!settings.value.host || !settings.value.key) {
+  showError = true;
+  errorType = "Configuration Error";
+  errorText = "Both Host and API Key Required in Settings"
+}
+
 </script>
 
 <template>
@@ -48,6 +60,12 @@ let errorText = "";
       <v-toolbar-title>My files</v-toolbar-title>
     </v-app-bar>
     <v-main>
+      <v-alert 
+        v-show="showError"
+        density="compact"
+        :title="errorType"
+        prominent
+        type="error">{{errorText}}</v-alert>
       <Splitpanes class="default-theme">
         <Pane min-size="30">
           <div>1</div>
