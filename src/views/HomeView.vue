@@ -42,7 +42,10 @@ let navData = ref({});
 const init = async () => {
   try {
     const miniflux = new MinifluxApi(settings.value.host, settings.value.key);
-    console.log(await miniflux.get_feeds());
+    console.log(await miniflux.getFeeds());
+    console.log(await miniflux.me());
+    console.log(await miniflux.exportFeeds());
+    console.log(await miniflux.getFeed(1));
   } catch (e) {
     showError.value = true;
     errorType.value = e.title;
