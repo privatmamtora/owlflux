@@ -10,16 +10,18 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="tree">
+  <nav class="tree">
     <ul class="tree-list" role="tree" aria-label="Feeds List">
       <TreeNode v-for="node in props.treeData" :key="node.id" :node="node"></TreeNode>
     </ul>
-  </div>
+  </nav>
 </template>
 
 <style>
-.tree-list ul {
-  padding-left: 16px;
-  margin: 6px 0;
+ul[role="tree"] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 120%;
 }
 </style>

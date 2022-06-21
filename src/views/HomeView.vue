@@ -9,7 +9,7 @@ import { useTreeStore } from '../stores/tree'
 import { MinifluxApi } from '../util/miniflux';
 
 // import TreeNode from "../components/TreeNode.vue";
-import Tree from "../components/Tree.vue";
+import TreeList from "../components/TreeList.vue";
 
 const settingsStore = useSettingsStore();
 const treeStore = useTreeStore();
@@ -186,7 +186,7 @@ const nodes = [
         <Pane min-size="20" :size="paneSize1">
           <div>1: {{ selectedText }}</div>
           <v-card>
-            <Tree :tree-data="nodes" />
+            <TreeList :tree-data="nodes" />
           </v-card>
         </Pane>
         <Pane min-size="30" :size="paneSize2">
