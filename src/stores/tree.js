@@ -7,7 +7,10 @@ export const useTreeStore = defineStore({
   }),
   getters: {
     selectedText (state) {
-      return state.selectedItem.innerText;
+      if (state.selectedItem) {
+        return state.selectedItem.querySelector('.label').innerText;
+      }
+      return '';
     }
   },
 })
