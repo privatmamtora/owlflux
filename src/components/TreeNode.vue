@@ -50,9 +50,8 @@ let selectNode = (e) => {
   <li 
     class="node-tree" 
     role="treeitem" 
-    :aria-expanded="showChildren" 
-    aria-selected="false" 
-    @click.stop.self="selectNode">
+    :aria-expanded="hasChildren && showChildren" 
+    aria-selected="false">
     <v-icon
       v-if="hasChildren"
       @click.stop="toggleChildren"
