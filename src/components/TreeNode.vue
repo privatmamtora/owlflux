@@ -70,22 +70,11 @@ let selectNode = (e) => {
 </template>
 
 <style>
-/*ul {
-  padding-left: 16px;
-  margin: 6px 0;
-}*/
-
-ul[role="tree"] {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 120%;
-}
-
 ul[role="tree"] li {
   margin: 0;
   padding: 0;
   list-style: none;
+  width:  auto;
 }
 
 [role="treeitem"][aria-expanded="false"] + [role="group"] {
@@ -97,7 +86,6 @@ ul[role="tree"] li {
 }
 
 [role="treeitem"].doc::before {
-  font-family: "Font Awesome 5 Free";
   content: "\f15c";
   display: inline-block;
   padding-right: 2px;
@@ -112,20 +100,6 @@ ul[role="tree"] li {
 [role="treeitem"][aria-expanded="true"] > ul {
   display: block;
 }
-
-/*[role="treeitem"][aria-expanded="false"] > span::before {
-  display: inline-block;
-  padding-right: 3px;
-  vertical-align: middle;
-  font-weight: 900;
-}
-
-[role="treeitem"][aria-expanded="true"] > span::before {
-  display: inline-block;
-  padding-right: 3px;
-  vertical-align: middle;
-  font-weight: 900;
-}*/
 
 [role="treeitem"],
 [role="treeitem"] span {
@@ -150,14 +124,13 @@ ul[role="tree"] li {
   border-left: 5px solid #005a9c;
 }
 
-[role="treeitem"].focus,
-[role="treeitem"] span.focus {
+/*[role="treeitem"]:focus,
+[role="treeitem"] span:focus {
   border-color: black;
   background-color: #eee;
-}
+}*/
 
-[role="treeitem"].hover,
-[role="treeitem"] span:hover {
+[role="treeitem"]:hover {
   padding-left: 4px;
   background-color: #ddd;
   border-left: 5px solid #333;
