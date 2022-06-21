@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useTreeStore } from '../stores/tree'
+const treeStore = useTreeStore();
 
 const props = defineProps({
   node: {
@@ -33,21 +35,16 @@ const hasChildren = computed(() => {
 
 let selectNode = (e) => {
   console.log(e);
-  console.log(e.target);
-  e.target.setAttribute(
-      'aria-selected', 
-      e.target.getAttribute('aria-selected') === 'true' 
-        ? 'false' 
-        : 'true'
-    );
+  if(treeStore.selectedItem !== e.target) {
+    if(treeStore.selectedItem) {
+      treeStore.selectedItem.setAttribute('aria-selected', 'false');
+    }
+    e.target.setAttribute('aria-selected', 'true');      
+    treeStore.selectedItem = e.target;
+  }
 }
 
 </script>
-
-<script>
-export default {
-  name: 'TreeNode'
-}</script>
 
 <template>
   <li 

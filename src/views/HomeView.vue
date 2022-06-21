@@ -5,14 +5,16 @@ import { watch, ref } from 'vue'
 
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
-
+import { useTreeStore } from '../stores/tree'
 import { MinifluxApi } from '../util/miniflux';
 
 // import TreeNode from "../components/TreeNode.vue";
 import Tree from "../components/Tree.vue";
 
 const settingsStore = useSettingsStore();
+const treeStore = useTreeStore();
 let { settings } = storeToRefs(settingsStore);
+let { selectedItem, selectedText } = storeToRefs(treeStore);
 
 const items = [
       {
@@ -182,7 +184,7 @@ const nodes = [
         type="error">{{errorText}}</v-alert>
       <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
         <Pane min-size="20" :size="paneSize1">
-          <div>1</div>
+          <div>1: {{ selectedText }}</div>
           <v-card>
             <Tree :tree-data="nodes" />
           </v-card>
