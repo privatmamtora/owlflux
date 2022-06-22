@@ -186,7 +186,7 @@ const nodes = [
         <Pane min-size="20" :size="paneSize1">
           <div>1: {{ selectedText }}</div>
           <v-card>
-            <TreeList :tree-data="nodes" />
+            <TreeList :tree-data="nodes" expanded />
           </v-card>
         </Pane>
         <Pane min-size="30" :size="paneSize2">

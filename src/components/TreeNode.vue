@@ -11,10 +11,14 @@ const props = defineProps({
   spacing: {
     type: Number,
     default: 0
+  },
+  ariaExpanded: {
+    type: Boolean,
+    default: true
   }
 });
 
-let showChildren = ref(false);
+let showChildren = ref(props.ariaExpanded);
 let currentIcon = ref('');
 showChildren.value ? currentIcon.value = 'mdi-chevron-down' : currentIcon.value = 'mdi-chevron-right';
 

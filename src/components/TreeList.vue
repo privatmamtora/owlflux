@@ -5,6 +5,10 @@ const props = defineProps({
   treeData: {
     type: Object,
     required: true
+  },
+  expanded: {
+    type: Boolean,
+    default: false
   }
 });
 </script>
@@ -12,7 +16,7 @@ const props = defineProps({
 <template>
   <nav class="tree">
     <ul class="tree-list" role="tree" aria-label="Feeds List">
-      <TreeNode v-for="node in props.treeData" :key="node.id" :node="node"></TreeNode>
+      <TreeNode v-for="node in props.treeData" :key="node.id" :node="node" :aria-expanded="props.expanded"></TreeNode>
     </ul>
   </nav>
 </template>
