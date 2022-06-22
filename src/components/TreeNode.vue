@@ -28,8 +28,8 @@ let toggleChildren = (e) => {
   // e.stopPropagation()
 }
 
-const nodeMargin = computed(() => {
-  return {'margin-left': `${props.spacing}px`}
+const nodePadding = computed(() => {
+  return {'padding-left': `${props.spacing*1.5}em`}
 });
 
 const hasChildren = computed(() => {
@@ -80,19 +80,42 @@ const index = computed(() => {
   }
 });
 
+let onFocus = (e) => {
+  let node = e.target;
+  console.log('focus', node);
+  if (node.tagName !== 'LI') {
+    return;
+  }
+  node.classList.add('focus');
+  node.closest('NAV').classList.add('focus');
+}
+
+let onBlur = (e) => {
+  let node = e.target;
+  console.log('blur', node);
+  if (node.tagName !== 'LI') {
+    return;
+  }
+  node.classList.remove('focus');
+  node.closest('NAV').classList.remove('focus');
+}
+
 </script>
 
 <template>
-  <li class="node-tree" role="treeitem" 
+  <li role="treeitem" 
     aria-selected="false"
     :aria-expanded="hasChildren && showChildren"    
-    @keypress.stop="handleKeyEvent"
+    @keydown.stop="handleKeyEvent"
     @click.stop="selectNode"
+    @focus.stop="onFocus"
+    @blur.stop="onBlur"
     @mouseover.stop="hover = true"
     @mouseout.stop="hover = false"
     :class="{ 'hover': hover }"
     :tabIndex="index" >
-    <span class="item">
+    <span class="item"
+    :style="nodePadding" >
       <v-icon
         v-if="hasChildren"
         @click.stop="toggleChildren"
@@ -104,40 +127,22 @@ const index = computed(() => {
         v-for="child in node.children"
         :key="child.id"
         :node="child"
-        :spacing="spacing + 10"
+        :spacing="props.spacing + 1"
       />
     </ul>
   </li>
 </template>
 
 <style>
-[role="treeitem"] {
-  width: auto;
+
+nav {
+  margin: 0;
+  padding: 6px;
 }
 
-/* disable default keyboard focus styling for treeitems
-   Keyboard focus is styled with the following CSS */
-[role="treeitem"]:focus {
-  outline: 0;
+nav.focus {
+  border: 3px solid #005a9c;
 }
-
-
-/*[role="treeitem"]:focus,
-[role="treeitem"] span:focus {
-  border-color: black;
-  background-color: #eee;
-}*/
-
-/*[role="treeitem"]:hover {
-  padding-left: 4px;
-  background-color: #ddd;
-  border-left: 5px solid #333;
-}*/
-
-ul, ol {
-    margin-left: 0;
-    padding-left: 1em;
-  }
 
 ul[role="tree"] {
   margin: 0;
@@ -150,8 +155,26 @@ ul[role="tree"] li {
   margin: 0;
   padding: 0;
   list-style: none;
+  width: auto;
 }
 
+[role="treeitem"] > span.item {
+  display: flex;
+}
+
+/* disable default keyboard focus styling for treeitems
+   Keyboard focus is styled with the following CSS */
+[role="treeitem"]:focus {
+  outline: 0;
+}
+
+/* Handle indent */
+/*ul[role="group"] > li span.item, ol[role="group"] > li span.item {
+  margin-left: 0;
+  padding-left: 1em;
+}*/
+
+/* SHow/Hide Sub-items */
 [role="treeitem"][aria-expanded="false"] + [role="group"] {
   display: none;
 }
@@ -168,36 +191,29 @@ ul[role="tree"] li {
   display: block;
 }
 
-[role="treeitem"],
-[role="treeitem"] span {
-  margin: 0;
-  padding: 0.125em;
-}
 
-/* disable default keyboard focus styling for treeitems
-   Keyboard focus is styled with the following CSS */
-[role="treeitem"]:focus {
-  outline: 0;
-}
 
-[role="treeitem"].focus,
-[role="treeitem"] span.focus {
+
+/* Keyboard focus  */
+[role="treeitem"].focus > span.item {
   border-color: black;
   background-color: #eee;
+  border: 2px #005a9c solid;
 }
 
-[role="treeitem"].hover > span.item span.label{
+/* Selected Item  */
+[role="treeitem"][aria-selected="true"] > span.item {
+  background-color: #ddd;
+  border-left: 5px solid #005a9c;
+  padding-left: 4px;
+}
+
+/* Mouse hover  */
+[role="treeitem"].hover > span.item {
   padding-left: 4px;
   background-color: #adddff;
   /*background-color: #ddd;*/
   border-left: 5px solid #333;
 }
-
-[role="treeitem"][aria-selected="true"] > span.item span.label {
-  border-left: 5px solid #005a9c;
-  padding-left: 4px;
-  background-color: #ddd;
-}
-
 
 </style>
