@@ -18,6 +18,19 @@ const props = defineProps({
   }
 });
 
+const keyCode = Object.freeze({
+  RETURN: 13,
+  SPACE: 32,
+  PAGEUP: 33,
+  PAGEDOWN: 34,
+  END: 35,
+  HOME: 36,
+  LEFT: 37,
+  UP: 38,
+  RIGHT: 39,
+  DOWN: 40,
+});
+
 let showChildren = ref(props.ariaExpanded);
 let currentIcon = ref('');
 showChildren.value ? currentIcon.value = 'mdi-chevron-down' : currentIcon.value = 'mdi-chevron-right';
@@ -52,18 +65,124 @@ let selectNode = (e) => {
   }
 }
 
+function setFocus(curr, next) {
+  curr.tabIndex = -1;
+  next.tabIndex = 0;
+  next.focus();
+}
+
+function setFocusToFirstItem(node) {
+  let nodes = Array.from(node.closest('nav').querySelectorAll('LI[role="treeitem"]'));
+  let index = 0;
+  let next;
+
+  while (index < nodes.length) {
+    if(nodes[index].clientWidth) {
+      next = nodes[index];
+      break;
+    }
+    index++;
+  }
+  
+  if (next) {
+    setFocus(node, next);
+  }
+}
+
+function setFocusToNextItem(node) {
+  let nodes = Array.from(node.closest('nav').querySelectorAll('LI[role="treeitem"]'));
+  let index = nodes.indexOf(node)+1;
+  let next;
+
+  while (index < nodes.length) {
+    if(nodes[index].clientWidth) {
+      next = nodes[index];
+      break;
+    }
+    index++;
+  }
+  
+  if (next) {
+    setFocus(node, next);
+  }
+}
+
+function setFocusToPreviousItem(node) {
+  let nodes = Array.from(node.closest('nav').querySelectorAll('LI[role="treeitem"]'));
+  let index = nodes.indexOf(node)-1;
+  let next;
+
+  while (index > -1) {
+    if(nodes[index].clientWidth) {
+      next = nodes[index];
+      break;
+    }
+    index--;
+  }
+  
+  if (next) {
+    setFocus(node, next);
+  }
+}
+
+function setFocusToLastItem(node) {
+  let nodes = Array.from(node.closest('nav').querySelectorAll('LI[role="treeitem"]'));
+  let index = nodes.length-1;
+  let next;
+
+  while (index > -1) {
+    if(nodes[index].clientWidth) {
+      next = nodes[index];
+      break;
+    }
+    index--;
+  }
+  
+  if (next) {
+    setFocus(node, next);
+  }
+}
+
 let handleKeyEvent = (e) => {
   console.log(e);
+  let node = e.target;
   
   if (e.altKey || e.ctrlKey || e.metaKey || e.shift) {
     return;
   }
-
+  
   switch (e.keyCode) {
-    case this.keyCode.RETURN:
-    case this.keyCode.SPACE:
+    case keyCode.RETURN:
+    case keyCode.SPACE:
       selectNode(e);
-      break;      
+      break;
+
+    case keyCode.RIGHT:
+      if (hasChildren.value && !showChildren.value) {
+        toggleChildren(e);
+      }
+      break;
+    case keyCode.LEFT:
+      if (hasChildren.value && showChildren.value) {
+        toggleChildren(e);
+      } else {
+        if (node.parentElement.closest('LI')) {
+          setFocus(node, node.parentElement.closest('LI'));
+        }
+      }
+      break;
+    case keyCode.UP:
+      setFocusToPreviousItem(node);
+      break;
+    case keyCode.DOWN:
+      setFocusToNextItem(node);
+      break;
+    case keyCode.HOME:
+      setFocusToFirstItem(node);
+      break;
+    case keyCode.END:
+      setFocusToLastItem(node);
+      break;
     default:
       break;
   }
@@ -122,7 +241,9 @@ let onBlur = (e) => {
       >{{currentIcon}}</v-icon>
       <span class="label">{{ node.label }}</span>
   </span>
-    <ul role="group" v-if="hasChildren" v-show="showChildren" :style="nodeMargin">
+    <ul role="group" 
+      v-if="hasChildren" 
+      v-show="showChildren">
       <TreeNode
         v-for="child in node.children"
         :key="child.id"
