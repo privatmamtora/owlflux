@@ -16,24 +16,6 @@ const treeStore = useTreeStore();
 let { settings } = storeToRefs(settingsStore);
 let { selectedText } = storeToRefs(treeStore);
 
-const items = [
-      {
-        title: 'Foo',
-        value: 'foo',
-      },
-      {
-        title: 'Bar',
-        value: 'bar',
-      },
-      {
-        title: 'Fizz',
-        value: 'fizz',
-      },
-      {
-        title: 'Buzz',
-        value: 'buzz',
-      }
-];
 let drawer = ref(false);
 let group = ref(null);
 watch(group, () => drawer.value = false);
@@ -47,7 +29,6 @@ let feedTree = ref({});
 let paneSize1 = ref(settings.value.paneSize ? settings.value.paneSize[0].size : 30);
 let paneSize2 = ref(settings.value.paneSize ? settings.value.paneSize[1].size : 30);
 function saveSize(name, e) {
-  console.log(`${name}: ${JSON.stringify(e)}`);
   settings.value.paneSize = e;
 }
 
@@ -69,20 +50,6 @@ const init = async () => {
   }
 }
 init();
-
-const tree = {
-  label: "A cool folder",
-  children: [
-    {
-      label: "A cool sub-folder 1",
-      children: [
-        { label: "A cool sub-sub-folder 1" },
-        { label: "A cool sub-sub-folder 2" }
-      ]
-    },
-    { label: "This one is not that cool" }
-  ]
-}
 
 const nodes = [
         {
@@ -160,7 +127,7 @@ const nodes = [
 </script>
 
 <template>
-  <v-navigation-drawer v-model="drawer" app>
+  <!-- <v-navigation-drawer v-model="drawer" app>
     <v-list-item>
       <v-list-item-title>OwlFlux</v-list-item-title>
       <v-btn class="ml-auto" to="/settings">
@@ -170,7 +137,7 @@ const nodes = [
     <v-list
       :items="items"
     ></v-list>
-  </v-navigation-drawer>
+  </v-navigation-drawer> -->
   <v-app-bar density="compact">
     <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
     <v-toolbar-title>My files</v-toolbar-title>

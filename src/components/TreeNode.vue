@@ -35,7 +35,7 @@ let showChildren = ref(props.ariaExpanded);
 let currentIcon = ref('');
 showChildren.value ? currentIcon.value = 'mdi-chevron-down' : currentIcon.value = 'mdi-chevron-right';
 
-let toggleChildren = (e) => { 
+let toggleChildren = () => { 
   showChildren.value = !showChildren.value;
   showChildren.value ? currentIcon.value = 'mdi-chevron-down' : currentIcon.value = 'mdi-chevron-right'
   // e.stopPropagation()
@@ -52,7 +52,6 @@ const hasChildren = computed(() => {
 
 let selectNode = (e) => {
   let node = e.target;
-  console.log(node);
   if (node.tagName !== 'LI') {
     node = node.closest('LI');
   }
@@ -144,7 +143,6 @@ function setFocusToLastItem(node) {
 }
 
 let handleKeyEvent = (e) => {
-  console.log(e);
   let node = e.target;
   
   if (e.altKey || e.ctrlKey || e.metaKey || e.shift) {
@@ -201,7 +199,6 @@ const index = computed(() => {
 
 let onFocus = (e) => {
   let node = e.target;
-  console.log('focus', node);
   if (node.tagName !== 'LI') {
     return;
   }
@@ -211,7 +208,6 @@ let onFocus = (e) => {
 
 let onBlur = (e) => {
   let node = e.target;
-  console.log('blur', node);
   if (node.tagName !== 'LI') {
     return;
   }
@@ -255,7 +251,6 @@ let onBlur = (e) => {
 </template>
 
 <style>
-
 nav {
   margin: 0;
   padding: 6px;
@@ -289,12 +284,6 @@ ul[role="tree"] li {
   outline: 0;
 }
 
-/* Handle indent */
-/*ul[role="group"] > li span.item, ol[role="group"] > li span.item {
-  margin-left: 0;
-  padding-left: 1em;
-}*/
-
 /* SHow/Hide Sub-items */
 [role="treeitem"][aria-expanded="false"] + [role="group"] {
   display: none;
@@ -311,9 +300,6 @@ ul[role="tree"] li {
 [role="treeitem"][aria-expanded="true"] > ul {
   display: block;
 }
-
-
-
 
 /* Keyboard focus  */
 [role="treeitem"].focus > span.item {
