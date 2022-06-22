@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 export const useTreeStore = defineStore({
   id: 'Tree',
   state: () => ({
-    selectedItem: false
+    selectedItem: false,
+    first: true
   }),
   getters: {
     selectedText (state) {

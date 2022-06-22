@@ -14,7 +14,7 @@ import TreeList from "../components/TreeList.vue";
 const settingsStore = useSettingsStore();
 const treeStore = useTreeStore();
 let { settings } = storeToRefs(settingsStore);
-let { selectedItem, selectedText } = storeToRefs(treeStore);
+let { selectedText } = storeToRefs(treeStore);
 
 const items = [
       {

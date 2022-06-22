@@ -71,19 +71,27 @@ let handleKeyEvent = (e) => {
 
 let hover = ref(false);
 
+const index = computed(() => {
+  if (treeStore.first) {
+    treeStore.first = false;
+    return '0';
+  } else {
+    return '-1'
+  }
+});
+
 </script>
 
 <template>
-  <li 
-    class="node-tree" 
-    role="treeitem" 
-    :aria-expanded="hasChildren && showChildren"    
+  <li class="node-tree" role="treeitem" 
     aria-selected="false"
+    :aria-expanded="hasChildren && showChildren"    
     @keypress.stop="handleKeyEvent"
     @click.stop="selectNode"
     @mouseover.stop="hover = true"
     @mouseout.stop="hover = false"
-    :class="{ 'hover': hover }" >
+    :class="{ 'hover': hover }"
+    :tabIndex="index" >
     <span class="item">
       <v-icon
         v-if="hasChildren"
