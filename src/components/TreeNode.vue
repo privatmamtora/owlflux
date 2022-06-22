@@ -38,15 +38,38 @@ const hasChildren = computed(() => {
 });
 
 let selectNode = (e) => {
-  console.log(e);
-  if(treeStore.selectedItem !== e.target) {
+  let node = e.target;
+  console.log(node);
+  if (node.tagName !== 'LI') {
+    node = node.closest('LI');
+  }
+  if(treeStore.selectedItem !== node) {
     if(treeStore.selectedItem) {
       treeStore.selectedItem.setAttribute('aria-selected', 'false');
     }
-    e.target.setAttribute('aria-selected', 'true');      
-    treeStore.selectedItem = e.target;
+    node.setAttribute('aria-selected', 'true');      
+    treeStore.selectedItem = node;
   }
 }
+
+let handleKeyEvent = (e) => {
+  console.log(e);
+  
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shift) {
+    return;
+  }
+
+  switch (e.keyCode) {
+    case this.keyCode.RETURN:
+    case this.keyCode.SPACE:
+      selectNode(e);
+      break;      
+    default:
+      break;
+  }
+}
+
+let hover = ref(false);
 
 </script>
 
@@ -54,14 +77,20 @@ let selectNode = (e) => {
   <li 
     class="node-tree" 
     role="treeitem" 
-    :aria-expanded="hasChildren && showChildren" 
-    aria-selected="false">
-    <v-icon
-      v-if="hasChildren"
-      @click.stop="toggleChildren"
-      @keypress.stop="toggleChildren"
-    >{{currentIcon}}</v-icon>
-    <span class="label">{{ node.label }}</span>
+    :aria-expanded="hasChildren && showChildren"    
+    aria-selected="false"
+    @keypress.stop="handleKeyEvent"
+    @click.stop="selectNode"
+    @mouseover.stop="hover = true"
+    @mouseout.stop="hover = false"
+    :class="{ 'hover': hover }" >
+    <span class="item">
+      <v-icon
+        v-if="hasChildren"
+        @click.stop="toggleChildren"
+      >{{currentIcon}}</v-icon>
+      <span class="label">{{ node.label }}</span>
+  </span>
     <ul role="group" v-if="hasChildren" v-show="showChildren" :style="nodeMargin">
       <TreeNode
         v-for="child in node.children"
@@ -74,11 +103,45 @@ let selectNode = (e) => {
 </template>
 
 <style>
+[role="treeitem"] {
+  width: auto;
+}
+
+/* disable default keyboard focus styling for treeitems
+   Keyboard focus is styled with the following CSS */
+[role="treeitem"]:focus {
+  outline: 0;
+}
+
+
+/*[role="treeitem"]:focus,
+[role="treeitem"] span:focus {
+  border-color: black;
+  background-color: #eee;
+}*/
+
+/*[role="treeitem"]:hover {
+  padding-left: 4px;
+  background-color: #ddd;
+  border-left: 5px solid #333;
+}*/
+
+ul, ol {
+    margin-left: 0;
+    padding-left: 1em;
+  }
+
+ul[role="tree"] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 120%;
+}
+
 ul[role="tree"] li {
   margin: 0;
   padding: 0;
   list-style: none;
-  width:  auto;
 }
 
 [role="treeitem"][aria-expanded="false"] + [role="group"] {
@@ -87,14 +150,6 @@ ul[role="tree"] li {
 
 [role="treeitem"][aria-expanded="true"] + [role="group"] {
   display: block;
-}
-
-[role="treeitem"].doc::before {
-  content: "\f15c";
-  display: inline-block;
-  padding-right: 2px;
-  padding-left: 5px;
-  vertical-align: middle;
 }
 
 [role="treeitem"][aria-expanded="false"] > ul {
@@ -107,14 +162,8 @@ ul[role="tree"] li {
 
 [role="treeitem"],
 [role="treeitem"] span {
-  width: 9em;
   margin: 0;
   padding: 0.125em;
-  /*display: block;*/
-}
-
-[role="treeitem"] span {
-  pointer-events: none;
 }
 
 /* disable default keyboard focus styling for treeitems
@@ -123,21 +172,24 @@ ul[role="tree"] li {
   outline: 0;
 }
 
-[role="treeitem"][aria-selected="true"] {
-  padding-left: 4px;
-  border-left: 5px solid #005a9c;
-}
-
-/*[role="treeitem"]:focus,
-[role="treeitem"] span:focus {
+[role="treeitem"].focus,
+[role="treeitem"] span.focus {
   border-color: black;
   background-color: #eee;
-}*/
+}
 
-[role="treeitem"]:hover {
+[role="treeitem"].hover > span.item span.label{
   padding-left: 4px;
-  background-color: #ddd;
+  background-color: #adddff;
+  /*background-color: #ddd;*/
   border-left: 5px solid #333;
 }
+
+[role="treeitem"][aria-selected="true"] > span.item span.label {
+  border-left: 5px solid #005a9c;
+  padding-left: 4px;
+  background-color: #ddd;
+}
+
 
 </style>
