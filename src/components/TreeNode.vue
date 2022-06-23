@@ -42,7 +42,7 @@ let toggleChildren = () => {
 }
 
 const nodePadding = computed(() => {
-  return {'padding-left': `${props.spacing*1.5}em`}
+  return {'padding-left': `${props.spacing*1.25}em`}
 });
 
 const hasChildren = computed(() => {
@@ -233,6 +233,7 @@ let onBlur = (e) => {
     :style="nodePadding" >
       <v-icon
         v-if="hasChildren"
+        size="small"
         @click.stop="toggleChildren"
       >{{currentIcon}}</v-icon>
       <span class="label">{{ node.title }}</span>
@@ -264,7 +265,6 @@ ul[role="tree"] {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 120%;
 }
 
 ul[role="tree"] li {
