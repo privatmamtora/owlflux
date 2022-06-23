@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useStorage } from '@vueuse/core'
 
 export const useTreeStore = defineStore({
   id: 'Tree',
@@ -6,7 +7,7 @@ export const useTreeStore = defineStore({
     selectedItem: false,
     first: true,
     treeData: {},
-    iconData: []
+    iconData: useStorage('icon-data', [])
   }),
   getters: {
     selectedText (state) {

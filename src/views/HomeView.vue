@@ -13,7 +13,7 @@ import TreeList from "../components/TreeList.vue";
 const settingsStore = useSettingsStore();
 const treeStore = useTreeStore();
 let { settings } = storeToRefs(settingsStore);
-let { selectedText } = storeToRefs(treeStore);
+let { selectedText, iconData } = storeToRefs(treeStore);
 
 let drawer = ref(false);
 let group = ref(null);
@@ -38,12 +38,21 @@ const init = async () => {
     console.log(feeds);
     let categories = [];
 
+    let currentIcons = iconData.value || [];
+    let getIcons = [];
+
     for (let feed of feeds) {
       // Find unique categories
       if (!categories.find((c) => c.id === feed.category.id)) {
         let cat = feed.category;
         cat.type = "category";
         categories.push(cat);
+      }
+      // Check if Icon cached
+      if (feed.icon) {
+        if (!currentIcons.find((i) => i.id === feed.icon.icon_id)) {
+          getIcons.push(miniflux.getFeedIcon(feed.id));
+        }
       }
     }
 
@@ -64,7 +73,6 @@ const init = async () => {
       for(let feed of catFeeds) {
         // console.log(feed);
         feed.type = "feed";
-        // feed.icon = await miniflux.getFeedIcon(feed.id);
         children.push(feed);
       }
       cat.children = children;
@@ -72,9 +80,10 @@ const init = async () => {
     }
     treeStore.treeData = feedTree;
 
-    let iconSets = await Promise.all(feeds.map((f) => miniflux.getFeedIcon(f.id)));
-    treeStore.iconData = iconSets;
-    // console.log(categories);
+    if (getIcons.length) {
+      let newIconSet = await Promise.all(getIcons);
+      iconData.value = currentIcons.concat(newIconSet);
+    }
 
     console.log(feedTree);
 
