@@ -8,7 +8,6 @@ import { useSettingsStore } from '../stores/settings'
 import { useTreeStore } from '../stores/tree'
 import { MinifluxApi } from '../util/miniflux';
 
-// import TreeNode from "../components/TreeNode.vue";
 import TreeList from "../components/TreeList.vue";
 
 const settingsStore = useSettingsStore();
@@ -24,8 +23,6 @@ let showError = ref(false);
 let errorType = ref("");
 let errorText = ref("");
 
-let feedTree = ref({});
-
 let paneSize1 = ref(settings.value.paneSize ? settings.value.paneSize[0].size : 30);
 let paneSize2 = ref(settings.value.paneSize ? settings.value.paneSize[1].size : 30);
 function saveSize(name, e) {
@@ -39,8 +36,47 @@ const init = async () => {
     let feeds = await miniflux.getFeeds();
     console.log(await miniflux.me());
     console.log(feeds);
+    let categories = [];
 
+    for (let feed of feeds) {
+      // Find unique categories
+      if (!categories.find((c) => c.id === feed.category.id)) {
+        let cat = feed.category;
+        cat.type = "category";
+        categories.push(cat);
+      }
+    }
 
+    const feedTree = [
+      { id: -1, title: 'All', unreads: 0 },
+      {
+        id: -2,
+        title: 'Starred',
+        unreads: 0,
+      },
+    ];
+
+    categories.sort((a, b) => a.title.localeCompare(b.title));
+    for(let cat of categories) {
+      let children = [];
+      let catFeeds = feeds.filter((f) => f.category.id === cat.id)
+                          .sort((a, b) => a.title.localeCompare(b.title));
+      for(let feed of catFeeds) {
+        // console.log(feed);
+        feed.type = "feed";
+        // feed.icon = await miniflux.getFeedIcon(feed.id);
+        children.push(feed);
+      }
+      cat.children = children;
+      feedTree.push(cat);
+    }
+    treeStore.treeData = feedTree;
+
+    let iconSets = await Promise.all(feeds.map((f) => miniflux.getFeedIcon(f.id)));
+    treeStore.iconData = iconSets;
+    // console.log(categories);
+
+    console.log(feedTree);
 
   } catch (e) {
     showError.value = true;
@@ -50,79 +86,6 @@ const init = async () => {
   }
 }
 init();
-
-const nodes = [
-        {
-          id: 1,
-          label: 'Foods',
-          children: [
-            {
-              id: 2,
-              label: 'Fruits',
-              children: [
-                {
-                  id: 3,
-                  label: 'Banana'
-                },
-                {
-                  id: 4,
-                  label: 'Apple'
-                },
-                {
-                  id: 5,
-                  label: 'Strawberry'
-                }
-              ]
-            },
-            {
-              id: 6,
-              label: 'Vegetables',
-              children: [
-                {
-                  id: 7,
-                  label: 'Carrot'
-                },
-                {
-                  id: 8,
-                  label: 'Lettuce'
-                },
-                {
-                  id: 9,
-                  label: 'Potato'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 10,
-          label: 'Drinks',
-          children: [
-            {
-              id: 11,
-              label: 'Beers',
-              children: [
-                {
-                  id: 12,
-                  label: 'Budweiser'
-                },
-                {
-                  id: 13,
-                  label: 'Heineken'
-                }
-              ]
-            },
-            {
-              id: 14,
-              label: 'Wines'
-            },
-            {
-              id: 15,
-              label: 'Whiskey'
-            }
-          ]
-        }
-      ];
 
 </script>
 
@@ -153,7 +116,7 @@ const nodes = [
         <Pane min-size="20" :size="paneSize1">
           <div>1: {{ selectedText }}</div>
           <v-card>
-            <TreeList :tree-data="nodes" expanded />
+            <TreeList :tree-data="treeStore.treeData" expanded />
           </v-card>
         </Pane>
         <Pane min-size="30" :size="paneSize2">

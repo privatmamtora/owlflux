@@ -4,7 +4,9 @@ export const useTreeStore = defineStore({
   id: 'Tree',
   state: () => ({
     selectedItem: false,
-    first: true
+    first: true,
+    treeData: {},
+    iconData: []
   }),
   getters: {
     selectedText (state) {

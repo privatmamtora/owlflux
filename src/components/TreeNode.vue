@@ -235,7 +235,7 @@ let onBlur = (e) => {
         v-if="hasChildren"
         @click.stop="toggleChildren"
       >{{currentIcon}}</v-icon>
-      <span class="label">{{ node.label }}</span>
+      <span class="label">{{ node.title }}</span>
   </span>
     <ul role="group" 
       v-if="hasChildren" 
