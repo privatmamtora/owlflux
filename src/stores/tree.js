@@ -7,7 +7,8 @@ export const useTreeStore = defineStore({
     selectedItem: false,
     first: true,
     treeData: {},
-    iconData: useStorage('icon-data', [])
+    iconData: useStorage('icon-data', []),
+    unreadCounters: {}
   }),
   getters: {
     selectedText (state) {
@@ -19,6 +20,11 @@ export const useTreeStore = defineStore({
     getIconById: (state) => {
       return (iconId) => {
         return state.iconData.find((icon) => icon.id === iconId);
+      }
+    },
+    unreadCounterById: (state) => {
+      return (feedId) => {
+        return state.unreadCounters[feedId];
       }
     },
   },

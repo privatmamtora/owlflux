@@ -61,11 +61,10 @@ const init = async () => {
     }
 
     const feedTree = [
-      { id: -1, title: 'All', unreads: 0 },
+      { id: -1, title: 'All' },
       {
         id: -2,
-        title: 'Starred',
-        unreads: 0,
+        title: 'Starred'
       },
     ];
 
@@ -85,9 +84,11 @@ const init = async () => {
       feedTree.push(cat);
     }
     treeStore.treeData = feedTree;
-
-
     console.log(feedTree);
+
+    let counters = await miniflux.getFeedCounters();
+    treeStore.unreadCounters = counters.unreads;
+    console.log(counters);
 
   } catch (e) {
     showError.value = true;

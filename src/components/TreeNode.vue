@@ -222,6 +222,23 @@ const hasIcon = computed(() => {
   return false;  
 });
 
+const unreadCount = computed(() => {
+  if(props.node.type === 'feed') {
+    return treeStore.unreadCounters[props.node.id];
+  } else if (props.node.type === 'category') {
+    return props.node.children.reduce((previousValue, currentValue) => { 
+      return previousValue + treeStore.unreadCounters[currentValue.id];
+    }, 0);
+  } else if (props.node.id === -1) {
+    console.log(props.node);
+    console.log(Object.keys(treeStore.unreadCounters));
+    return Object.keys(treeStore.unreadCounters).reduce((previousValue, currentValue) => { 
+      return previousValue + treeStore.unreadCounters[currentValue];
+    }, 0);
+  }
+  return 0;
+});
+
 </script>
 
 <template>
@@ -245,7 +262,12 @@ const hasIcon = computed(() => {
       >{{currentIcon}}</v-icon>      
       <img v-if="hasIcon" style="height: 1em; max-width: 100%;" :src="node.icon.data" />
       <span class="label">{{ node.title }}</span>
-  </span>
+      <v-badge 
+      v-if="unreadCount"
+      color="info"
+      :content="unreadCount" 
+      inline></v-badge>
+    </span>
     <ul role="group" 
       v-if="hasChildren" 
       v-show="showChildren">
