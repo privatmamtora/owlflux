@@ -55,6 +55,10 @@ const init = async () => {
         }
       }
     }
+    if (getIcons.length) {
+      let newIconSet = await Promise.all(getIcons);
+      iconData.value = currentIcons.concat(newIconSet);
+    }
 
     const feedTree = [
       { id: -1, title: 'All', unreads: 0 },
@@ -71,8 +75,10 @@ const init = async () => {
       let catFeeds = feeds.filter((f) => f.category.id === cat.id)
                           .sort((a, b) => a.title.localeCompare(b.title));
       for(let feed of catFeeds) {
-        // console.log(feed);
         feed.type = "feed";
+        if (feed.icon) {
+          feed.icon.data = 'data:' + treeStore.getIconById(feed.icon.icon_id).data;
+        }
         children.push(feed);
       }
       cat.children = children;
@@ -80,10 +86,6 @@ const init = async () => {
     }
     treeStore.treeData = feedTree;
 
-    if (getIcons.length) {
-      let newIconSet = await Promise.all(getIcons);
-      iconData.value = currentIcons.concat(newIconSet);
-    }
 
     console.log(feedTree);
 

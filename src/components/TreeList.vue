@@ -26,6 +26,5 @@ ul[role="tree"] {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 120%;
 }
 </style>

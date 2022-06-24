@@ -215,6 +215,13 @@ let onBlur = (e) => {
   node.closest('NAV').classList.remove('focus');
 }
 
+const hasIcon = computed(() => {
+  if(props.node.type === 'feed' && props.node.icon.data) {
+    return true;
+  }
+  return false;  
+});
+
 </script>
 
 <template>
@@ -235,7 +242,8 @@ let onBlur = (e) => {
         v-if="hasChildren"
         size="small"
         @click.stop="toggleChildren"
-      >{{currentIcon}}</v-icon>
+      >{{currentIcon}}</v-icon>      
+      <img v-if="hasIcon" style="height: 1em; max-width: 100%;" :src="node.icon.data" />
       <span class="label">{{ node.title }}</span>
   </span>
     <ul role="group" 
@@ -276,6 +284,12 @@ ul[role="tree"] li {
 
 [role="treeitem"] > span.item {
   display: flex;
+  align-items: center;
+}
+
+[role="treeitem"] > span.item img {
+  height: 1.1em;
+  padding-right: 2px;
 }
 
 /* disable default keyboard focus styling for treeitems

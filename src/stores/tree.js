@@ -15,6 +15,11 @@ export const useTreeStore = defineStore({
         return state.selectedItem.querySelector('.label').innerText;
       }
       return '';
-    }
+    },
+    getIconById: (state) => {
+      return (iconId) => {
+        return state.iconData.find((icon) => icon.id === iconId);
+      }
+    },
   },
 })
