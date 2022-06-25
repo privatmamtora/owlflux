@@ -5,6 +5,7 @@ export const useTreeStore = defineStore({
   id: 'Tree',
   state: () => ({
     selectedItem: false,
+    selectedItemData: {},
     treeData: {},
     iconData: useStorage('icon-data', []),
     unreadCounters: {}
