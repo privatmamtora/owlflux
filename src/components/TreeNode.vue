@@ -189,12 +189,10 @@ let handleKeyEvent = (e) => {
 let hover = ref(false);
 
 const index = computed(() => {
-  if (treeStore.first) {
-    treeStore.first = false;
+  if (props.node.id == -1) {
     return '0';
-  } else {
-    return '-1'
   }
+  return '-1';
 });
 
 let onFocus = (e) => {
@@ -230,8 +228,6 @@ const unreadCount = computed(() => {
       return previousValue + treeStore.unreadCounters[currentValue.id];
     }, 0);
   } else if (props.node.id === -1) {
-    console.log(props.node);
-    console.log(Object.keys(treeStore.unreadCounters));
     return Object.keys(treeStore.unreadCounters).reduce((previousValue, currentValue) => { 
       return previousValue + treeStore.unreadCounters[currentValue];
     }, 0);
