@@ -189,13 +189,6 @@ let handleKeyEvent = (e) => {
 
 let hover = ref(false);
 
-const index = computed(() => {
-  if (props.node.id == -1) {
-    return '0';
-  }
-  return '-1';
-});
-
 let onFocus = (e) => {
   let node = e.target;
   if (node.tagName !== 'LI') {
@@ -249,7 +242,7 @@ const unreadCount = computed(() => {
     @mouseover.stop="hover = true"
     @mouseout.stop="hover = false"
     :class="{ 'hover': hover }"
-    :tabIndex="index" >
+    tabIndex="-1" >
     <span class="item"
     :style="nodePadding" >
       <v-icon
