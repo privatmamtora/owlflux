@@ -1,5 +1,4 @@
 <script setup>
-import { ref, onMounted } from 'vue'
 import TreeNode from "./TreeNode.vue";
 
 const props = defineProps({
@@ -13,18 +12,11 @@ const props = defineProps({
   }
 });
 
-const tree = ref()
-
-onMounted(() => {
-  tree.value.firstElementChild.setAttribute('tabIndex', '0')
-  console.log(tree.value.firstElementChild);
-  // tree.value // <div>
-})
 </script>
 
 <template>
   <nav class="tree">
-    <ul class="tree-list" role="tree" aria-label="Feeds List" ref="tree">
+    <ul class="tree-list" role="tree" aria-label="Feeds List">
       <TreeNode v-for="node in props.treeData" :key="node.id" :node="node" :aria-expanded="props.expanded"></TreeNode>
     </ul>
   </nav>
