@@ -1,19 +1,23 @@
 <script setup>
 import 'splitpanes/dist/splitpanes.css'
 import { Splitpanes, Pane } from 'splitpanes'
-import { watch, ref } from 'vue'
+import { watch, ref, computed } from 'vue'
 
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 import { useTreeStore } from '../stores/tree'
+import { useEntriesStore } from '../stores/entries'
 import { MinifluxApi } from '../util/miniflux';
 
 import TreeList from "../components/TreeList.vue";
+import EntriesList from "../components/EntriesList.vue";
 
 const settingsStore = useSettingsStore();
 const treeStore = useTreeStore();
+const entriesStore = useEntriesStore();
+
 let { settings } = storeToRefs(settingsStore);
-let { selectedText, iconData } = storeToRefs(treeStore);
+let { selectedText, iconData, selectedItemData } = storeToRefs(treeStore);
 
 let drawer = ref(false);
 let group = ref(null);
@@ -29,10 +33,37 @@ function saveSize(name, e) {
   settings.value.paneSize = e;
 }
 
+let miniflux;
+try {
+  miniflux = new MinifluxApi(settings.value.host, settings.value.key);
+} catch (e) {
+  showError.value = true;
+  errorType.value = e.title;
+  errorText.value = e.message;
+  console.log(e);
+}
+
+watch(selectedItemData, (newValue) => {
+  console.log('new', newValue);
+  if(treeStore.selectedItemData.type === 'feed') {
+    console.log('Feed');
+    miniflux.getFeedEntries(treeStore.selectedItemData.id, { 'limit': 25 })
+    .then(data => {
+      console.log(data);
+      entriesStore.entries = data;
+    });
+  } else if(treeStore.selectedItemData.type === 'category') {
+    console.log('Category');
+    miniflux.getEntries({ 'category_id': newValue.id, 'limit': 25 })
+    .then(data => {      
+      console.log(data);
+      entriesStore.entries = data;
+    });
+  }
+});
+
 const init = async () => {
   try {
-    const miniflux = new MinifluxApi(settings.value.host, settings.value.key);
-
     let feeds = await miniflux.getFeeds();
     console.log(await miniflux.me());
     console.log(feeds);
@@ -133,6 +164,7 @@ init();
         </Pane>
         <Pane min-size="30" :size="paneSize2">
           <div>2</div>
+          <EntriesList v-if="selectedText" :data="entriesStore.entries" />
         </Pane>
         <Pane min-size="30" :size="100-paneSize1-paneSize2">
           <div>3</div>
@@ -140,3 +172,13 @@ init();
       </Splitpanes>
   </v-main>
 </template>
+
+<style type="text/css">
+.splitpanes__pane {
+  overflow: auto;
+}
+
+main {
+  height: 0vh;
+}
+</style>
