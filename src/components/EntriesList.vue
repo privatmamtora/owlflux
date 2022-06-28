@@ -1,6 +1,9 @@
 <script setup>
 import { useTreeStore } from '../stores/tree'
+import { useEntriesStore } from '../stores/entries'
+
 const treeStore = useTreeStore();
+const entriesStore = useEntriesStore();
 
 const props = defineProps({
   data: {
@@ -31,6 +34,17 @@ function formatDate(dateString) {
   }
 }
 
+function hasSelected(table) {
+  return getSelected(table).length;
+}
+
+function getSelected(table) {
+  if (table.tagName !== 'TABLE') {
+    table = table.closest('TABLE');
+  }
+  return table.querySelectorAll('[aria-selected="true"]');
+}
+
 function isSelected(row) {
   return row.getAttribute('aria-selected') === 'true';
 }
@@ -44,12 +58,19 @@ function toggleRow(row) {
 }
 
 function selectRow(e) {
-  console.log(e.target);
   let row = e.target;
   if(row.tagName === "TD") {
     row = row.closest('TR');    
   }
-  toggleRow(row);
+  
+  if (hasSelected(row)) {
+    toggleRow(getSelected(row)[0]);
+    toggleRow(row);
+  } else {
+    toggleRow(row);
+  }
+  let id = row.getAttribute('data-feed-id');
+  entriesStore.selectedEntry = props.data.entries.find(ent => ent.id == id);
 }
 
 </script>
@@ -76,10 +97,20 @@ function selectRow(e) {
 .v-table--density-compact > .v-table__wrapper > table > tfoot > tr > th {
   height: unset;
 }
+
 .v-table--density-compact > .v-table__wrapper > table > tbody > tr > td,
 .v-table--density-compact > .v-table__wrapper > table > thead > tr > td,
 .v-table--density-compact > .v-table__wrapper > table > tfoot > tr > td {
   height: unset;
+}
+
+.v-table > .v-table__wrapper > table > tbody > tr > td,
+.v-table > .v-table__wrapper > table > tbody > tr > th,
+.v-table > .v-table__wrapper > table > thead > tr > td,
+.v-table > .v-table__wrapper > table > thead > tr > th,
+.v-table > .v-table__wrapper > table > tfoot > tr > td,
+.v-table > .v-table__wrapper > table > tfoot > tr > th {
+  padding: 0 8px;
 }
 
 .v-table .v-table__wrapper > table > tbody > tr:hover {
@@ -89,8 +120,4 @@ function selectRow(e) {
 .v-table .v-table__wrapper > table > tbody > tr[aria-selected="true"] {
   background: #ddd;
 }
-/*tr[aria-selected="true"] {
-  background: #bdf;
-}*/
-
 </style>

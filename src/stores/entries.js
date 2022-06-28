@@ -4,6 +4,7 @@ export const useEntriesStore = defineStore({
   id: 'Entries',
   state: () => ({
     entries: [],
+    selectedEntry: {},
   }),
   getters: {
     selectedText (state) {

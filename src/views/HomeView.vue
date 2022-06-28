@@ -146,30 +146,28 @@ init();
   </v-navigation-drawer> -->
   <v-app-bar density="compact">
     <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-toolbar-title>My files</v-toolbar-title>
+    <v-toolbar-title>{{ selectedText }}</v-toolbar-title>
   </v-app-bar>
   <v-main>
-      <v-alert 
-        v-show="showError"
-        density="compact"
-        :title="errorType"
-        prominent
-        type="error">{{errorText}}</v-alert>
-      <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
-        <Pane min-size="20" :size="paneSize1">
-          <div>1: {{ selectedText }}</div>
-          <v-card>
-            <TreeList :tree-data="treeStore.treeData" expanded />
-          </v-card>
-        </Pane>
-        <Pane min-size="30" :size="paneSize2">
-          <div>2</div>
-          <EntriesList v-if="selectedText" :data="entriesStore.entries" />
-        </Pane>
-        <Pane min-size="30" :size="100-paneSize1-paneSize2">
-          <div>3</div>
-        </Pane>
-      </Splitpanes>
+    <v-alert 
+      v-show="showError"
+      density="compact"
+      :title="errorType"
+      prominent
+      type="error">{{errorText}}</v-alert>
+    <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
+      <Pane min-size="20" :size="paneSize1">
+        <v-card>
+          <TreeList :tree-data="treeStore.treeData" expanded />
+        </v-card>
+      </Pane>
+      <Pane min-size="30" :size="paneSize2">
+        <EntriesList v-if="selectedText" :data="entriesStore.entries" />
+      </Pane>
+      <Pane min-size="30" :size="100-paneSize1-paneSize2">
+        <v-card v-html="entriesStore.selectedEntry.content"></v-card>
+      </Pane>
+    </Splitpanes>
   </v-main>
 </template>
 
