@@ -13,3 +13,7 @@ const settingsStore = useSettingsStore();
     </v-app>
   </v-theme-provider>
 </template>
+
+<style type="text/css">
+  html { overflow-y: hidden !important; }
+</style>
