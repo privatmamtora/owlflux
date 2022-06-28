@@ -47,14 +47,14 @@ watch(selectedItemData, (newValue) => {
   console.log('new', newValue);
   if(treeStore.selectedItemData.type === 'feed') {
     console.log('Feed');
-    miniflux.getFeedEntries(treeStore.selectedItemData.id, { 'limit': 25 })
+    miniflux.getFeedEntries(treeStore.selectedItemData.id, { 'limit': 25, 'order': 'published_at', 'direction': 'desc' })
     .then(data => {
       console.log(data);
       entriesStore.entries = data;
     });
   } else if(treeStore.selectedItemData.type === 'category') {
     console.log('Category');
-    miniflux.getEntries({ 'category_id': newValue.id, 'limit': 25 })
+    miniflux.getEntries({ 'category_id': newValue.id, 'limit': 25, 'order': 'published_at', 'direction': 'desc' })
     .then(data => {      
       console.log(data);
       entriesStore.entries = data;
