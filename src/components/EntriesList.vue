@@ -31,13 +31,38 @@ function formatDate(dateString) {
   }
 }
 
+function isSelected(row) {
+  return row.getAttribute('aria-selected') === 'true';
+}
+
+function toggleRow(row) {
+  if (isSelected(row)) {
+    row.setAttribute('aria-selected', 'false');
+  } else {
+    row.setAttribute('aria-selected', 'true');
+  }
+}
+
+function selectRow(e) {
+  console.log(e.target);
+  let row = e.target;
+  if(row.tagName === "TD") {
+    row = row.closest('TR');    
+  }
+  toggleRow(row);
+}
+
 </script>
 
 <template>
-  <v-table density="compact">
+  <v-table 
+    density="compact"    
+    @click.stop="selectRow">
     <tbody>
       <tr v-for="entry in props.data.entries"
-        :key="entry.id">
+        :key="entry.id" 
+        :data-feed-id="entry.id"
+        aria-selected="false">
         <td>{{ entry.title }}</td>        
         <td>{{ formatDate(entry.published_at) }}</td>        
       </tr>
@@ -45,7 +70,7 @@ function formatDate(dateString) {
   </v-table>
 </template>
 
-<style>
+<style scoped>
 .v-table--density-compact > .v-table__wrapper > table > tbody > tr > th,
 .v-table--density-compact > .v-table__wrapper > table > thead > tr > th,
 .v-table--density-compact > .v-table__wrapper > table > tfoot > tr > th {
@@ -56,4 +81,16 @@ function formatDate(dateString) {
 .v-table--density-compact > .v-table__wrapper > table > tfoot > tr > td {
   height: unset;
 }
+
+.v-table .v-table__wrapper > table > tbody > tr:hover {
+  background: #bdf;
+}
+
+.v-table .v-table__wrapper > table > tbody > tr[aria-selected="true"] {
+  background: #ddd;
+}
+/*tr[aria-selected="true"] {
+  background: #bdf;
+}*/
+
 </style>
