@@ -250,7 +250,7 @@ const unreadCount = computed(() => {
         size="small"
         @click.stop="toggleChildren"
       >{{currentIcon}}</v-icon>      
-      <img v-if="hasIcon" style="height: 1em; max-width: 100%;" :src="node.icon.data" />
+      <img v-if="hasIcon" class="icon" :src="node.icon.data" />
       <span class="label">{{ node.title }}</span>
       <v-badge 
       v-if="unreadCount"

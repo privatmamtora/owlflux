@@ -179,4 +179,9 @@ init();
 main {
   height: 0vh;
 }
+
+.icon {
+  height: 1em; 
+  max-width: 100%;
+}
 </style>
