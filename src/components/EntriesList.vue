@@ -1,9 +1,12 @@
 <script setup>
 import { useTreeStore } from '../stores/tree'
 import { useEntriesStore } from '../stores/entries'
+import { storeToRefs } from 'pinia'
 
 const treeStore = useTreeStore();
 const entriesStore = useEntriesStore();
+
+let { iconData } = storeToRefs(treeStore);
 
 const props = defineProps({
   data: {
@@ -71,6 +74,22 @@ function selectRow(e) {
   }
   let id = row.getAttribute('data-feed-id');
   entriesStore.selectedEntry = props.data.entries.find(ent => ent.id == id);
+  console.log(entriesStore.selectedEntry);
+}
+
+function hasIcon(entry) {
+  if(entry.feed.icon && entry.feed.icon.icon_id) {
+    return true;
+     // treeStore.getIconById(feed.icon.icon_id).data
+  }
+  return false;  
+}
+
+function getIcon(entry) {
+  if(entry.feed.icon && entry.feed.icon.icon_id) {
+    return 'data:' + treeStore.getIconById(entry.feed.icon.icon_id).data;
+  }
+  return '';  
 }
 
 </script>
@@ -84,8 +103,11 @@ function selectRow(e) {
         :key="entry.id" 
         :data-feed-id="entry.id"
         aria-selected="false">
+        <td v-if="hasIcon(entry)">
+          <img class="icon" :src="getIcon(entry)" />
+        </td>
         <td>{{ entry.title }}</td>        
-        <td>{{ formatDate(entry.published_at) }}</td>        
+        <td>{{ formatDate(entry.published_at) }}</td>
       </tr>
     </tbody>
   </v-table>
