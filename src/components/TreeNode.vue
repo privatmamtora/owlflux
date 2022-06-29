@@ -1,7 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useTreeStore } from '../stores/tree'
+import { useEntriesStore } from '../stores/entries'
 const treeStore = useTreeStore();
+const entriesStore = useEntriesStore();
 
 const props = defineProps({
   node: {
@@ -62,6 +64,7 @@ let selectNode = (e) => {
     node.setAttribute('aria-selected', 'true');      
     treeStore.selectedItem = node;
     treeStore.selectedItemData = props.node;
+    entriesStore.selectedEntry = {};
   }
 }
 
