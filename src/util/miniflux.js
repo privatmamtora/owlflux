@@ -317,8 +317,13 @@ class MinifluxApi {
 	 * Get entries in a Category
 	 * @returns {Object}
 	 */
-	async getCategoryEntries(category_id) {
-		return await this.apiCall('GET', this.#getEndpoint(`categories/${category_id}/entries`));
+	async getCategoryEntries(category_id, filters) {
+		let url = this.#getEndpoint(`categories/${category_id}/entries`);
+		var queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
+		if (queryString) {
+			url = url + '?' + queryString;
+		}
+		return await this.apiCall('GET', url);
 	}
 
 	/**
