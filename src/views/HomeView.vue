@@ -2,6 +2,7 @@
 import 'splitpanes/dist/splitpanes.css'
 import { Splitpanes, Pane } from 'splitpanes'
 import { watch, ref, computed } from 'vue'
+import { useDisplay } from 'vuetify'
 
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
@@ -18,6 +19,8 @@ const entriesStore = useEntriesStore();
 
 let { settings } = storeToRefs(settingsStore);
 let { selectedText, iconData, selectedItemData } = storeToRefs(treeStore);
+
+const { mobile } = useDisplay()
 
 let drawer = ref(false);
 let group = ref(null);
@@ -155,19 +158,24 @@ init();
       :title="errorType"
       prominent
       type="error">{{errorText}}</v-alert>
-    <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
-      <Pane min-size="20" :size="paneSize1">
-        <v-card>
-          <TreeList :tree-data="treeStore.treeData" expanded />
-        </v-card>
-      </Pane>
-      <Pane min-size="30" :size="paneSize2">
-        <EntriesList v-if="selectedText" :data="entriesStore.entries" />
-      </Pane>
-      <Pane min-size="30" :size="100-paneSize1-paneSize2">
-        <v-card v-html="entriesStore.selectedEntry.content"></v-card>
-      </Pane>
-    </Splitpanes>
+      <template v-if="!mobile">        
+        <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
+          <Pane min-size="20" :size="paneSize1">
+            <v-card>
+              <TreeList :tree-data="treeStore.treeData" expanded />
+            </v-card>
+          </Pane>
+          <Pane min-size="30" :size="paneSize2">
+            <EntriesList v-if="selectedText" :data="entriesStore.entries" />
+          </Pane>
+          <Pane min-size="30" :size="100-paneSize1-paneSize2">
+            <v-card v-html="entriesStore.selectedEntry.content"></v-card>
+          </Pane>
+        </Splitpanes>
+      </template>
+      <template v-else>
+        <div>Mobile</div>
+      </template>
   </v-main>
 </template>
 
