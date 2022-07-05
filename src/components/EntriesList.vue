@@ -12,8 +12,6 @@ const props = defineProps({
   }
 });
 
-console.log('Setup');
-
 function hasSelected(table) {
   return getSelected(table).length;
 }
@@ -42,6 +40,7 @@ function selectRow(e) {
   if(row.tagName === "TD") {
     row = row.closest('TR');    
   }
+
   
   if (hasSelected(row)) {
     toggleRow(getSelected(row)[0]);
@@ -50,7 +49,7 @@ function selectRow(e) {
     toggleRow(row);
   }
   let id = row.getAttribute('data-feed-id');
-  entriesStore.selectedEntry = props.data.entries.find(ent => ent.id == id);
+  entriesStore.selectedEntry = [props.data.entries.find(ent => ent.id == id)];
   console.log(entriesStore.selectedEntry);
 }
 
@@ -59,7 +58,8 @@ function selectRow(e) {
 <template>
   <v-table 
     density="compact"    
-    @click.stop="selectRow">
+    @click.stop="selectRow"
+    tabIndex="0">
     <tbody>
       <template v-for="entry in props.data.entries" :key="entry.id" >
         <EntryListItem :node="entry" />
