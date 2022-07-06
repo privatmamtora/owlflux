@@ -46,11 +46,6 @@ function getIcon(entry) {
   return '';  
 }
 
-const classObject = computed(() => ({
-  active: isActive.value && !error.value,
-  'text-danger': error.value && error.value.type === 'fatal'
-}))
-
 </script>
 <template>
 	<tr :data-feed-id="node.id"
