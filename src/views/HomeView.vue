@@ -169,7 +169,7 @@ init();
             <EntriesList v-if="selectedText" :data="entriesStore.entries" />
           </Pane>
           <Pane min-size="30" :size="100-paneSize1-paneSize2">
-            <v-card v-if="entriesStore.selectedEntry[0]" v-html="entriesStore.selectedEntry[0].content"></v-card>
+            <v-card v-if="entriesStore.selectedEntry" v-html="entriesStore.selectedContent"></v-card>
           </Pane>
         </Splitpanes>
       </template>

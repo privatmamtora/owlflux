@@ -64,7 +64,7 @@ let selectNode = (e) => {
     node.setAttribute('aria-selected', 'true');      
     treeStore.selectedItem = node;
     treeStore.selectedItemData = props.node;
-    entriesStore.selectedEntry = {};
+    entriesStore.selectedEntry = '';
   }
 }
 

@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import { useEntriesStore } from '../stores/entries'
 
 import EntryListItem from "../components/EntryListItem.vue";
@@ -11,6 +12,12 @@ const props = defineProps({
     required: true
   }
 });
+
+const tbody = ref(null);
+
+function getRowById(id) {
+  return tbody.value.querySelector(`[data-feed-id="${id}"`);
+}
 
 function hasSelected(table) {
   return getSelected(table).length;
@@ -41,26 +48,35 @@ function selectRow(e) {
     row = row.closest('TR');    
   }
 
-  
-  if (hasSelected(row)) {
-    toggleRow(getSelected(row)[0]);
-    toggleRow(row);
-  } else {
-    toggleRow(row);
-  }
   let id = row.getAttribute('data-feed-id');
-  entriesStore.selectedEntry = [props.data.entries.find(ent => ent.id == id)];
+  if (!entriesStore.selectedEntry || (entriesStore.selectedEntry && entriesStore.selectedEntry.id != id)) {
+    entriesStore.selectedEntry = id;
+  }
   console.log(entriesStore.selectedEntry);
 }
+
+entriesStore.$subscribe((mutation, state) => {
+  console.log('mutation',mutation, 'state', state);
+  if (mutation.type == 'direct' && mutation.events.key === 'selectedEntry') {
+    if (mutation.events.oldValue) {
+      let row = getRowById(mutation.events.oldValue);
+      row.setAttribute('aria-selected', 'false');
+    }
+    if (mutation.events.newValue) {      
+      let row = getRowById(mutation.events.newValue);
+      row.setAttribute('aria-selected', 'true');
+    }
+  }
+})
 
 </script>
 
 <template>
   <v-table 
-    density="compact"    
+    density="compact"
     @click.stop="selectRow"
     tabIndex="0">
-    <tbody>
+    <tbody ref="tbody">
       <template v-for="entry in props.data.entries" :key="entry.id" >
         <EntryListItem :node="entry" />
       </template>
