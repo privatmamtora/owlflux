@@ -200,8 +200,6 @@ let handleKeyEvent = (e) => {
   }
 }
 
-let hover = ref(false);
-
 let onFocus = (e) => {
   let node = e.target;
   if (node.tagName !== 'LI') {
@@ -242,6 +240,26 @@ const unreadCount = computed(() => {
   return 0;
 });
 
+function mouseOver(e) {
+  let node = e.target;  
+  if (node.tagName !== 'LI') {
+    node = node.closest('LI');
+  }
+  if (!node.classList.contains('hover')) {
+    node.classList.add('hover');
+  }
+}
+
+function mouseOut(e) {
+  let node = e.target;  
+  if (node.tagName !== 'LI') {
+    node = node.closest('LI');
+  }
+  if (node.classList.contains('hover')) {
+    node.classList.remove('hover');
+  }
+}
+
 </script>
 
 <template>
@@ -252,9 +270,8 @@ const unreadCount = computed(() => {
     @click.stop="selectNode"
     @focus.stop="onFocus"
     @blur.stop="onBlur"
-    @mouseover.stop="hover = true"
-    @mouseout.stop="hover = false"
-    :class="{ 'hover': hover }"
+    @mouseover.stop="mouseOver"
+    @mouseout.stop="mouseOut"
     :tabIndex="index" >
     <span class="item"
     :style="nodePadding" >

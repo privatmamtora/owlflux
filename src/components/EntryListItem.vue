@@ -50,16 +50,39 @@ function getIcon(entry) {
   return '';  
 }
 
-let hover = ref(false);
+function mouseOver(e) {
+	let node = e.target;	
+	if (node.tagName !== 'TR') {
+    node = node.closest('TR');
+  }
+	if (!node.classList.contains('hover')) {
+		node.classList.add('hover');
+	}
+}
+
+function mouseOut(e) {
+	let node = e.target;	
+	if (node.tagName !== 'TR') {
+    node = node.closest('TR');
+  }
+	if (node.classList.contains('hover')) {
+		node.classList.remove('hover');
+	}
+}
+
+let status = '';
+if (props.node.status === 'unread') {
+	status = 'unread';
+}
 
 </script>
 <template>
 	<tr :data-feed-id="node.id"
 		aria-selected="false"
-		:class="[{unread: node.status === 'unread'}, { 'hover': hover }]"
+		:class="status"
 		:tabIndex="props.index == 0 ? '0' : '-1'"		
-    @mouseover.stop="hover = true"
-    @mouseout.stop="hover = false">
+    @mouseover.stop="mouseOver"
+    @mouseout.stop="mouseOut">
 		<td v-if="hasIcon(node)">
 			<img class="icon" :src="getIcon(node)" />
 		</td>
