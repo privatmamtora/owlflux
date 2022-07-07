@@ -80,6 +80,13 @@ function selectRow(e) {
   console.log(entriesStore.selectedEntry);
 }
 
+function setFocusToFirstItem(node) {
+  let next = node.parentElement.firstElementChild;
+  if(node != next) {
+    setFocus(node, next);
+  }
+}
+
 function setFocusToNextItem(node) {
   let next = node.nextElementSibling;
   if (next) {
@@ -90,6 +97,13 @@ function setFocusToNextItem(node) {
 function setFocusToPreviousItem(node) {
   let next = node.previousElementSibling;
   if (next) {
+    setFocus(node, next);
+  }
+}
+      
+function setFocusToLastItem(node) {
+  let next = node.parentElement.lastElementChild;
+  if(node != next) {
     setFocus(node, next);
   }
 }
@@ -132,10 +146,10 @@ let handleKeyEvent = (e) => {
       setFocusToNextItem(node);
       break;
     case keyCode.HOME:
-      // setFocusToFirstItem(node);
+      setFocusToFirstItem(node);
       break;
     case keyCode.END:
-      // setFocusToLastItem(node);
+      setFocusToLastItem(node);
       break;
     default:
       break;
