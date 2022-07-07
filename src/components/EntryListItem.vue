@@ -93,9 +93,5 @@ if (props.node.status === 'unread') {
 	</tr>
 </template>
 <style>
-/* Mouse hover  */
-.v-table .v-table__wrapper > table > tbody > tr.hover {
-  background-color: #adddff !important;
-}
 	
 </style>

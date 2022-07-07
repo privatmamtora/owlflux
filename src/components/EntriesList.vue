@@ -217,4 +217,10 @@ entriesStore.$subscribe((mutation, state) => {
   border-width: 2px 0px;
   border-color: #005a9c;
 }
+
+/* Mouse hover  */
+.v-table .v-table__wrapper > table > tbody > tr.hover {
+  background-color: #adddff !important;
+}
+
 </style>
