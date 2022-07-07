@@ -50,12 +50,16 @@ function getIcon(entry) {
   return '';  
 }
 
+let hover = ref(false);
+
 </script>
 <template>
 	<tr :data-feed-id="node.id"
 		aria-selected="false"
-		:class="[{unread: node.status === 'unread'}]"
-		:tagIndex="props.index == 0 ? '0' : '-1'">
+		:class="[{unread: node.status === 'unread'}, { 'hover': hover }]"
+		:tabIndex="props.index == 0 ? '0' : '-1'"		
+    @mouseover.stop="hover = true"
+    @mouseout.stop="hover = false">
 		<td v-if="hasIcon(node)">
 			<img class="icon" :src="getIcon(node)" />
 		</td>
@@ -66,5 +70,9 @@ function getIcon(entry) {
 	</tr>
 </template>
 <style>
+/* Mouse hover  */
+.v-table .v-table__wrapper > table > tbody > tr.hover {
+  background-color: #adddff !important;
+}
 	
 </style>
