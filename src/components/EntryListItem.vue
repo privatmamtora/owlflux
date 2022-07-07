@@ -10,6 +10,10 @@ const props = defineProps({
 		type: Object,
 		required: true
 	},
+	index: {
+		type: Number,
+		required: true
+	},
 });
 
 function getPreviousDay(date = new Date()) {
@@ -50,7 +54,8 @@ function getIcon(entry) {
 <template>
 	<tr :data-feed-id="node.id"
 		aria-selected="false"
-		:class="[{unread: node.status === 'unread'}]">
+		:class="[{unread: node.status === 'unread'}]"
+		:tagIndex="props.index == 0 ? '0' : '-1'">
 		<td v-if="hasIcon(node)">
 			<img class="icon" :src="getIcon(node)" />
 		</td>

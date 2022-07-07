@@ -74,11 +74,10 @@ entriesStore.$subscribe((mutation, state) => {
 <template>
   <v-table 
     density="compact"
-    @click.stop="selectRow"
-    tabIndex="0">
+    @click.stop="selectRow">
     <tbody ref="tbody">
-      <template v-for="entry in props.data.entries" :key="entry.id" >
-        <EntryListItem :node="entry" />
+      <template v-for="(entry, index) in props.data.entries" :key="entry.id" >
+        <EntryListItem :node="entry" :index="index" />
       </template>
     </tbody>
   </v-table>
