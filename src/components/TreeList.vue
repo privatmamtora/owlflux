@@ -17,7 +17,11 @@ const props = defineProps({
 <template>
   <nav class="tree">
     <ul class="tree-list" role="tree" aria-label="Feeds List">
-      <TreeNode v-for="node in props.treeData" :key="node.id" :node="node" :aria-expanded="props.expanded"></TreeNode>
+      <TreeNode v-for="(node, index) in props.treeData" 
+        :key="node.id" 
+        :node="node" 
+        :aria-expanded="props.expanded"
+        :index="index"></TreeNode>
     </ul>
   </nav>
 </template>

@@ -17,8 +17,18 @@ const props = defineProps({
   ariaExpanded: {
     type: Boolean,
     default: true
+  },
+  index: {
+    type: Number,
+    default: -1,
+    required: true
   }
 });
+
+let index = 0;
+if(props.index != 0) {
+  index = -1
+}
 
 const keyCode = Object.freeze({
   RETURN: 13,
@@ -245,7 +255,7 @@ const unreadCount = computed(() => {
     @mouseover.stop="hover = true"
     @mouseout.stop="hover = false"
     :class="{ 'hover': hover }"
-    :tabIndex="node.id === -1? '0': '-1'" >
+    :tabIndex="index" >
     <span class="item"
     :style="nodePadding" >
       <v-icon
@@ -269,6 +279,7 @@ const unreadCount = computed(() => {
         :key="child.id"
         :node="child"
         :spacing="props.spacing + 1"
+        :index="-1"
       />
     </ul>
   </li>
