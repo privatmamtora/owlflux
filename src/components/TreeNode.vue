@@ -366,7 +366,7 @@ ul[role="tree"] li {
 
 /* Selected Item  */
 [role="treeitem"][aria-selected="true"] > span.item {
-  background-color: #ddd;
+  background-color: #ccc;
   border-left: 5px solid #005a9c;
   padding-left: 4px;
 }

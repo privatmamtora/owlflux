@@ -200,7 +200,7 @@ entriesStore.$subscribe((mutation, state) => {
 }
 
 .v-table .v-table__wrapper > table > tbody > tr[aria-selected="true"] {
-  background: #ddd;
+  background: #ccc;
 }
 
 .v-table .v-table__wrapper > table > tbody > tr.unread {
