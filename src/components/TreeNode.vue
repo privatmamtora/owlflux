@@ -343,7 +343,6 @@ ul[role="tree"] li {
 
 /* Keyboard focus  */
 [role="treeitem"].focus > span.item {
-  border-color: black;
   background-color: #eee;
   border: 2px #005a9c solid;
 }
