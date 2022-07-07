@@ -55,8 +55,14 @@ function toggleRow(row) {
   }
 }
 
-function setFocus(curr, next) {
-  curr.tabIndex = -1;
+function setFocus(next, curr) {
+  if (!curr) {
+    let body = next.closest('tbody');
+    curr = body.querySelector('[tabindex="0"]');    
+  }
+  if (curr) {
+    curr.tabIndex = -1;
+  }
   next.tabIndex = 0;
   next.focus();
 }
@@ -75,36 +81,36 @@ function selectRow(e) {
   }
   let id = row.getAttribute('data-feed-id');
   if (!entriesStore.selectedEntry || (entriesStore.selectedEntry && entriesStore.selectedEntry.id != id)) {
+    console.log('newly selected', entriesStore.selectedEntry);
     entriesStore.selectedEntry = id;
   }
-  console.log(entriesStore.selectedEntry);
 }
 
 function setFocusToFirstItem(node) {
   let next = node.parentElement.firstElementChild;
   if(node != next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
 
 function setFocusToNextItem(node) {
   let next = node.nextElementSibling;
   if (next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
 
 function setFocusToPreviousItem(node) {
   let next = node.previousElementSibling;
   if (next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
       
 function setFocusToLastItem(node) {
   let next = node.parentElement.lastElementChild;
   if(node != next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
 
@@ -138,7 +144,6 @@ let handleKeyEvent = (e) => {
     case keyCode.SPACE:
       selectRow(e);
       break;
-
     case keyCode.UP:
       setFocusToPreviousItem(node);
       break;
@@ -166,6 +171,7 @@ entriesStore.$subscribe((mutation, state) => {
     if (mutation.events.newValue) {      
       let row = getRowById(mutation.events.newValue);
       row.setAttribute('aria-selected', 'true');
+      setFocus(row);
     }
   }
 })
