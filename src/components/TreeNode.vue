@@ -71,15 +71,22 @@ let selectNode = (e) => {
     if(treeStore.selectedItem) {
       treeStore.selectedItem.setAttribute('aria-selected', 'false');
     }
-    node.setAttribute('aria-selected', 'true');      
+    node.setAttribute('aria-selected', 'true');
+    setFocus(node, treeStore.selectedItem);
     treeStore.selectedItem = node;
     treeStore.selectedItemData = props.node;
     entriesStore.selectedEntry = '';
   }
 }
 
-function setFocus(curr, next) {
-  curr.tabIndex = -1;
+function setFocus(next, curr) {
+  if (!curr) {
+    let tree = next.closest('[role="tree"]');
+    curr = tree.querySelector('[tabindex="0"]');    
+  }
+  if (curr) {
+    curr.tabIndex = -1;
+  }
   next.tabIndex = 0;
   next.focus();
 }
@@ -98,7 +105,7 @@ function setFocusToFirstItem(node) {
   }
   
   if (next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
 
@@ -116,7 +123,7 @@ function setFocusToNextItem(node) {
   }
   
   if (next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
 
@@ -134,7 +141,7 @@ function setFocusToPreviousItem(node) {
   }
   
   if (next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
 
@@ -152,7 +159,7 @@ function setFocusToLastItem(node) {
   }
   
   if (next) {
-    setFocus(node, next);
+    setFocus(next, node);
   }
 }
 
@@ -179,7 +186,7 @@ let handleKeyEvent = (e) => {
         toggleChildren(e);
       } else {
         if (node.parentElement.closest('LI')) {
-          setFocus(node, node.parentElement.closest('LI'));
+          setFocus(node.parentElement.closest('LI'), node);
         }
       }
       break;
