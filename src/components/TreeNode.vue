@@ -76,6 +76,7 @@ let selectNode = (e) => {
     treeStore.selectedItem = node;
     treeStore.selectedItemData = props.node;
     entriesStore.selectedEntry = '';
+    entriesStore.otherSelected = [];
   }
 }
 
