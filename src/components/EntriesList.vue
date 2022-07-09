@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useEntriesStore } from '../stores/entries'
+import { watchArray } from '@vueuse/core'
 
 import EntryListItem from "../components/EntryListItem.vue";
 
@@ -74,15 +75,42 @@ function selectRow(e) {
   }
 
   if(e.ctrlKey) {
-    // ulItem.removeChild(this);
+    console.log('Ctrl');
   }
   if(e.shiftKey) {
-    // 
+    console.log('Shift');
   }
   let id = row.getAttribute('data-feed-id');
-  if (!entriesStore.selectedEntry || (entriesStore.selectedEntry && entriesStore.selectedEntry.id != id)) {
+  if (!entriesStore.selectedEntry) {
+    // Nothing selected
     console.log('newly selected', entriesStore.selectedEntry);
     entriesStore.selectedEntry = id;
+  } else {
+    // Row already selected
+    if (entriesStore.selectedEntry && entriesStore.selectedEntry.id != id) {
+      // New row doesn't match current row
+      if (e.ctrlKey) {
+        // Add item
+        // let { otherSelected } = entriesStore;
+        // console.log(unref(otherSelected));
+        if (!entriesStore.otherSelected.includes(id)) {
+          // New Item
+          entriesStore.otherSelected.push(id);
+        } else {
+          // Remove Item
+          entriesStore.otherSelected.splice(entriesStore.otherSelected.indexOf(id), 1);
+        }
+      } else if (e.shiftKey) {
+        // Select between selectedEntry and new row
+
+      } else {
+        console.log('newly selected', entriesStore.selectedEntry);
+        entriesStore.selectedEntry = id;
+        if (entriesStore.otherSelected.length) {
+          entriesStore.otherSelected = [];
+        }
+      }
+    }
   }
 }
 
@@ -116,7 +144,6 @@ function setFocusToLastItem(node) {
 
 let onFocus = (e) => {
   let node = e.target;
-  console.log('focus', node);
   if (node.tagName !== 'TR') {
     return;
   }
@@ -125,7 +152,6 @@ let onFocus = (e) => {
 
 let onBlur = (e) => {
   let node = e.target;
-  console.log('blur', node);
   if (node.tagName !== 'TR') {
     return;
   }
@@ -161,20 +187,36 @@ let handleKeyEvent = (e) => {
   }
 }
 
-entriesStore.$subscribe((mutation, state) => {
-  console.log('mutation',mutation, 'state', state);
-  if (mutation.type == 'direct' && mutation.events.key === 'selectedEntry') {
-    if (mutation.events.oldValue) {
-      let row = getRowById(mutation.events.oldValue);
-      row.setAttribute('aria-selected', 'false');
-    }
-    if (mutation.events.newValue) {      
-      let row = getRowById(mutation.events.newValue);
+watch(()=> entriesStore.selectedEntry, (newValue, oldValue) => {
+  console.log('watch old', oldValue);
+  console.log('watch new', newValue);
+  if (oldValue) {
+    let row = getRowById(oldValue);
+    row.setAttribute('aria-selected', 'false');
+  }
+  if (newValue) {
+    let row = getRowById(newValue);
+    row.setAttribute('aria-selected', 'true');
+    setFocus(row);
+  }
+});
+
+watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) => {
+  console.log(added) // [4]
+  if (added.length) {
+    for (const id of added) {
+      let row = getRowById(id);
       row.setAttribute('aria-selected', 'true');
-      setFocus(row);
     }
   }
-})
+  console.log(removed) // []
+  if (removed.length) {
+    for (const id of removed) {
+      let row = getRowById(id);
+      row.setAttribute('aria-selected', 'false');
+    }
+  }
+}, { deep: true });
 
 </script>
 
