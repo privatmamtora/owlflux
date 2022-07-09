@@ -33,29 +33,6 @@ function getRowById(id) {
   return tbody.value.querySelector(`[data-feed-id="${id}"`);
 }
 
-function hasSelected(table) {
-  return getSelected(table).length;
-}
-
-function getSelected(table) {
-  if (table.tagName !== 'TABLE') {
-    table = table.closest('TABLE');
-  }
-  return table.querySelectorAll('[aria-selected="true"]');
-}
-
-function isSelected(row) {
-  return row.getAttribute('aria-selected') === 'true';
-}
-
-function toggleRow(row) {
-  if (isSelected(row)) {
-    row.setAttribute('aria-selected', 'false');
-  } else {
-    row.setAttribute('aria-selected', 'true');
-  }
-}
-
 function setFocus(next, curr) {
   if (!curr) {
     let body = next.closest('tbody');
