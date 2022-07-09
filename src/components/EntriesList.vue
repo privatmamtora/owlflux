@@ -64,7 +64,7 @@ function selectRow(e) {
     entriesStore.selectedEntry = id;
   } else {
     // Row already selected
-    if (entriesStore.selectedEntry && entriesStore.selectedEntry.id != id) {
+    if (entriesStore.selectedEntry != id) {
       // New row doesn't match current row
       if (e.ctrlKey) {
         // Add item
@@ -87,6 +87,10 @@ function selectRow(e) {
           entriesStore.otherSelected = [];
         }
       }
+    } else {
+      // Unselect selected entry
+      console.log('unselect selected', entriesStore.selectedEntry);
+      entriesStore.selectedEntry = '';
     }
   }
 }
