@@ -5,6 +5,8 @@ import { watchArray } from '@vueuse/core'
 
 import EntryListItem from "../components/EntryListItem.vue";
 
+console.log('Reload Entries List')
+
 const entriesStore = useEntriesStore();
 
 const props = defineProps({
@@ -45,28 +47,19 @@ function setFocus(next, curr) {
   next.focus();
 }
 
-function selectRow(e) {
-  let row = e.target;
-  if(row.tagName === "TD") {
-    row = row.closest('TR');    
-  }
-
-  if(e.ctrlKey) {
-    console.log('Ctrl');
-  }
-  if(e.shiftKey) {
-    console.log('Shift');
-  }
-  let id = row.getAttribute('data-feed-id');
+function selectRow(newRow, ctrlKey, shiftKey) {
+  // Update EntriesStore
+  let id = newRow.getAttribute('data-feed-id');
+  console.log('current selected', entriesStore.selectedEntry);
   if (!entriesStore.selectedEntry) {
     // Nothing selected
-    console.log('newly selected', entriesStore.selectedEntry);
     entriesStore.selectedEntry = id;
+    console.log('newly selected', entriesStore.selectedEntry);
   } else {
     // Row already selected
     if (entriesStore.selectedEntry != id) {
       // New row doesn't match current row
-      if (e.ctrlKey) {
+      if (ctrlKey) {
         // Add item
         // let { otherSelected } = entriesStore;
         // console.log(unref(otherSelected));
@@ -77,12 +70,33 @@ function selectRow(e) {
           // Remove Item
           entriesStore.otherSelected.splice(entriesStore.otherSelected.indexOf(id), 1);
         }
-      } else if (e.shiftKey) {
+      } else if (shiftKey) {
         // Select between selectedEntry and new row
-
+        let selectedRow = getRowById(entriesStore.selectedEntry);
+        let startIndex = selectedRow.rowIndex;
+        let endIndex = newRow.rowIndex;
+        let range = [];
+        if (endIndex > startIndex) {
+          // After
+          let count = endIndex - startIndex;
+          while (count > 0 && selectedRow.nextElementSibling) {
+            selectedRow = selectedRow.nextElementSibling;
+            range.push(selectedRow.getAttribute('data-feed-id'));
+            count--;
+          }
+        } else {
+          // Before
+          let count = startIndex - endIndex;
+          while (count > 0 && selectedRow.previousElementSibling) {
+            selectedRow = selectedRow.previousElementSibling;
+            range.push(selectedRow.getAttribute('data-feed-id'));
+            count--;
+          }
+        }
+        entriesStore.otherSelected = range;
       } else {
-        console.log('newly selected', entriesStore.selectedEntry);
         entriesStore.selectedEntry = id;
+        console.log('newly selected', entriesStore.selectedEntry);
         if (entriesStore.otherSelected.length) {
           entriesStore.otherSelected = [];
         }
@@ -95,32 +109,30 @@ function selectRow(e) {
   }
 }
 
-function setFocusToFirstItem(node) {
-  let next = node.parentElement.firstElementChild;
-  if(node != next) {
-    setFocus(next, node);
+function shiftSelectRow(row) {
+  let selectedRow = getRowById(entriesStore.selectedEntry);
+  let startIndex = selectedRow.rowIndex;
+  let endIndex = row.rowIndex;
+  let range = [];
+  if (endIndex > startIndex) {
+    // After
+    let count = endIndex - startIndex;
+    while (count > 0 && selectedRow.nextElementSibling) {
+      selectedRow = selectedRow.nextElementSibling;
+      range.push(selectedRow.getAttribute('data-feed-id'));
+      count--;
+    }
+  } else {
+    // Before
+    let count = startIndex - endIndex;
+    while (count > 0 && selectedRow.previousElementSibling) {
+      selectedRow = selectedRow.previousElementSibling;
+      range.push(selectedRow.getAttribute('data-feed-id'));
+      count--;
+    }
   }
-}
-
-function setFocusToNextItem(node) {
-  let next = node.nextElementSibling;
-  if (next) {
-    setFocus(next, node);
-  }
-}
-
-function setFocusToPreviousItem(node) {
-  let next = node.previousElementSibling;
-  if (next) {
-    setFocus(next, node);
-  }
-}
-      
-function setFocusToLastItem(node) {
-  let next = node.parentElement.lastElementChild;
-  if(node != next) {
-    setFocus(next, node);
-  }
+  entriesStore.otherSelected = range;
+  console.log('otherSelected', range);
 }
 
 let onFocus = (e) => {
@@ -139,29 +151,94 @@ let onBlur = (e) => {
   node.classList.remove('focus');
 }
 
-let handleKeyEvent = (e) => {
-  let node = e.target;
-  
-  if (e.altKey || e.ctrlKey || e.metaKey || e.shift) {
+let handleClick = (e) => {
+  if (e.altKey || e.metaKey) {
     return;
   }
-  
+
+  let row = e.target;
+  if(row.tagName === "TD") {
+    row = row.closest('TR');
+  }
+  if(e.ctrlKey) {
+    console.log('Ctrl');
+  }
+  if(e.shiftKey) {
+    console.log('Shift');
+  }
+  console.log(row);
+  selectRow(row, e.ctrlKey, e.shiftKey);
+  setFocus(row);
+}
+
+let handleKeyEvent = (e) => {
+  console.log('key event', e);
+  // if (e.altKey || e.ctrlKey || e.metaKey || e.shift) {
+  if (e.altKey || e.metaKey) {
+    return;
+  }
+
+  if(e.ctrlKey) {
+    console.log('Ctrl');
+  }
+  if(e.shiftKey) {
+    console.log('Shift');
+  }
+  let row = e.target;
+  console.log(row);
+  let next;
   switch (e.keyCode) {
     case keyCode.RETURN:
     case keyCode.SPACE:
-      selectRow(e);
+      selectRow(row, e.ctrlKey, e.shiftKey);
       break;
     case keyCode.UP:
-      setFocusToPreviousItem(node);
+      next = row.previousElementSibling;
+      if (next) {
+        if(e.shiftKey && next) {
+          if (!entriesStore.selectedEntry) {
+            selectRow(row);
+          }
+          shiftSelectRow(next);
+        }
+        setFocus(next, row);
+      }
       break;
     case keyCode.DOWN:
-      setFocusToNextItem(node);
+      next = row.nextElementSibling;
+      if (next) {
+        if(e.shiftKey && next) {
+          if (!entriesStore.selectedEntry) {
+            selectRow(row);
+          }
+          shiftSelectRow(next);
+        }
+        setFocus(next, row);
+      }
       break;
     case keyCode.HOME:
-      setFocusToFirstItem(node);
+      next = row.parentElement.firstElementChild;
+      if(row != next) {
+        if(e.shiftKey && next) {
+          if (!entriesStore.selectedEntry) {
+            selectRow(row);
+          }
+          shiftSelectRow(next);
+        }
+        setFocus(next, row);
+      }
       break;
     case keyCode.END:
-      setFocusToLastItem(node);
+      next = row.parentElement.lastElementChild;
+      if(row != next) {
+        if(e.shiftKey && next) {
+          if (!entriesStore.selectedEntry) {
+            selectRow(row);
+          }
+          shiftSelectRow(next);
+        }
+        setFocus(next, row);
+      }
       break;
     default:
       break;
@@ -178,19 +255,18 @@ watch(()=> entriesStore.selectedEntry, (newValue, oldValue) => {
   if (newValue) {
     let row = getRowById(newValue);
     row.setAttribute('aria-selected', 'true');
-    setFocus(row);
   }
 });
 
 watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) => {
-  console.log(added) // [4]
+  console.log(added)
   if (added.length) {
     for (const id of added) {
       let row = getRowById(id);
       row.setAttribute('aria-selected', 'true');
     }
   }
-  console.log(removed) // []
+  console.log(removed)
   if (removed.length) {
     for (const id of removed) {
       let row = getRowById(id);
@@ -205,7 +281,7 @@ watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) =
   <v-table 
     density="compact">
     <tbody ref="tbody"
-      @click.stop="selectRow"
+      @click.stop="handleClick"
       @keydown.stop="handleKeyEvent"
       @focus.capture.stop="onFocus"
       @blur.capture.stop="onBlur">
