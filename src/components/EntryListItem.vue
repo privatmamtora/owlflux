@@ -83,7 +83,8 @@ if (props.node.status === 'unread') {
 		:tabIndex="props.index == 0 ? '0' : '-1'"		
     @mouseover.stop="mouseOver"
     @mouseout.stop="mouseOut">
-		<td v-if="hasIcon(node)">
+		<td class="icon"
+			v-if="hasIcon(node)">
 			<img class="icon" :src="getIcon(node)" />
 		</td>
 		<td>{{ node.title }}</td>        
@@ -93,5 +94,13 @@ if (props.node.status === 'unread') {
 	</tr>
 </template>
 <style>
-	
+
+.v-table > .v-table__wrapper > table > tbody > tr > td.icon,
+.v-table > .v-table__wrapper > table > tbody > tr > th.icon,
+.v-table > .v-table__wrapper > table > thead > tr > td.icon,
+.v-table > .v-table__wrapper > table > thead > tr > th.icon,
+.v-table > .v-table__wrapper > table > tfoot > tr > td.icon,
+.v-table > .v-table__wrapper > table > tfoot > tr > th.icon {
+  padding: 0 8px 0 4px;
+}
 </style>
