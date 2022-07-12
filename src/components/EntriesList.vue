@@ -136,6 +136,27 @@ function shiftSelectRow(row) {
   console.log('otherSelected', range);
 }
 
+function nextElementPage(row, direction) {
+  let rowCount = tbody.value.rows.length;
+  if (direction === 'down' && row.index+1 === rowCount) return;
+  if (direction === 'up' && row.index === 0) return;
+
+  let pageCount = Math.floor(tbody.value.clientHeight/row.clientHeight);
+  let index;
+  if(direction === 'down') {
+    index = row.rowIndex + pageCount;
+    if (index > rowCount) {
+      index = rowCount-1;
+    }
+  } else if (direction === 'up') {
+    index = row.rowIndex - pageCount;
+    if (index < 0) {
+      index = 0;
+    }
+  }
+  return tbody.value.rows[index];
+}
+
 let onFocus = (e) => {
   let node = e.target;
   if (node.tagName !== 'TR') {
@@ -227,6 +248,32 @@ let handleKeyEvent = (e) => {
         }
         setFocus(next, row);
       }
+      break;
+    case keyCode.PAGEUP:
+      next = nextElementPage(row, 'up');
+      if (next) {
+        if(e.shiftKey && next) {
+          if (!entriesStore.selectedEntry) {
+            selectRow(row);
+          }
+          shiftSelectRow(next);
+        }
+        setFocus(next, row);
+      }
+      e.preventDefault();
+      break;
+    case keyCode.PAGEDOWN:
+      next = nextElementPage(row, 'down');
+      if (next) {
+        if(e.shiftKey && next) {
+          if (!entriesStore.selectedEntry) {
+            selectRow(row);
+          }
+          shiftSelectRow(next);
+        }
+        setFocus(next, row);
+      }
+      e.preventDefault();
       break;
     default:
       break;
