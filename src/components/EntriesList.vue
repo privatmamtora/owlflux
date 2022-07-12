@@ -156,18 +156,11 @@ let handleClick = (e) => {
   if (e.altKey || e.metaKey) {
     return;
   }
-
   let row = e.target;
   if(row.tagName === "TD") {
     row = row.closest('TR');
   }
-  if(e.ctrlKey) {
-    console.log('Ctrl');
-  }
-  if(e.shiftKey) {
-    console.log('Shift');
-  }
-  console.log(row);
+
   selectRow(row, e.ctrlKey, e.shiftKey);
   setFocus(row);
 }
@@ -178,15 +171,7 @@ let handleKeyEvent = (e) => {
   if (e.altKey || e.metaKey) {
     return;
   }
-
-  if(e.ctrlKey) {
-    console.log('Ctrl');
-  }
-  if(e.shiftKey) {
-    console.log('Shift');
-  }
   let row = e.target;
-  console.log(row);
   let next;
   switch (e.keyCode) {
     case keyCode.RETURN:
@@ -325,53 +310,72 @@ onUpdated(()=> {
 </template>
 
 <style>
-.v-table--density-compact > .v-table__wrapper > table > tbody > tr > th,
-.v-table--density-compact > .v-table__wrapper > table > thead > tr > th,
-.v-table--density-compact > .v-table__wrapper > table > tfoot > tr > th {
-  height: unset;
-}
+  .v-table--density-compact > .v-table__wrapper > table > tbody > tr > th,
+  .v-table--density-compact > .v-table__wrapper > table > thead > tr > th,
+  .v-table--density-compact > .v-table__wrapper > table > tfoot > tr > th {
+    height: unset;
+  }
 
-.v-table--density-compact > .v-table__wrapper > table > tbody > tr > td,
-.v-table--density-compact > .v-table__wrapper > table > thead > tr > td,
-.v-table--density-compact > .v-table__wrapper > table > tfoot > tr > td {
-  height: unset;
-}
+  .v-table--density-compact > .v-table__wrapper > table > tbody > tr > td,
+  .v-table--density-compact > .v-table__wrapper > table > thead > tr > td,
+  .v-table--density-compact > .v-table__wrapper > table > tfoot > tr > td {
+    height: unset;
+  }
 
-.v-table > .v-table__wrapper > table > tbody > tr > td,
-.v-table > .v-table__wrapper > table > tbody > tr > th,
-.v-table > .v-table__wrapper > table > thead > tr > td,
-.v-table > .v-table__wrapper > table > thead > tr > th,
-.v-table > .v-table__wrapper > table > tfoot > tr > td,
-.v-table > .v-table__wrapper > table > tfoot > tr > th {
-  padding: 0 8px;
-}
+  .v-table > .v-table__wrapper > table > tbody > tr > td,
+  .v-table > .v-table__wrapper > table > tbody > tr > th,
+  .v-table > .v-table__wrapper > table > thead > tr > td,
+  .v-table > .v-table__wrapper > table > thead > tr > th,
+  .v-table > .v-table__wrapper > table > tfoot > tr > td,
+  .v-table > .v-table__wrapper > table > tfoot > tr > th {
+    padding: 0 8px;
+  }
 
-.v-table .v-table__wrapper > table {
-  border-collapse: collapse;
-}
+  .v-table .v-table__wrapper > table {
+    border-collapse: collapse;
+    height: 100%;
+    box-sizing:border-box;
+  }
 
-.v-table .v-table__wrapper > table > tbody > tr[aria-selected="true"] {
-  background: #ccc;
-}
+  .v-table {
+    height: 100%;
+  }
 
-.v-table .v-table__wrapper > table > tbody > tr.unread {
-  font-weight: bold;
-}
+  .v-table > .v-table__wrapper {
+    height: 100%;
+  }
 
-.v-table .v-table__wrapper > table > tbody > tr:focus {
-  outline: 0;
-}
+  .v-table .v-table__wrapper > table > tbody {
+    display: block;
+    overflow-y: auto;
+    max-height: calc(100vh - 48px);
+  }
 
-.v-table .v-table__wrapper > table > tbody > tr.focus {
-  background-color: #eee;
-  border-style: solid;
-  border-width: 2px 0px;
-  border-color: #005a9c;
-}
+  .v-table .v-table__wrapper > table > tbody > tr {
+    display: table-row;
+  }
 
-/* Mouse hover  */
-.v-table .v-table__wrapper > table > tbody > tr.hover {
-  background-color: #adddff !important;
-}
+  .v-table .v-table__wrapper > table > tbody > tr[aria-selected="true"] {
+    background: #ccc;
+  }
 
+  .v-table .v-table__wrapper > table > tbody > tr.unread {
+    font-weight: bold;
+  }
+
+  .v-table .v-table__wrapper > table > tbody > tr:focus {
+    outline: 0;
+  }
+
+  .v-table .v-table__wrapper > table > tbody > tr.focus {
+    background-color: #eee;
+    border-style: solid;
+    border-width: 2px 0px;
+    border-color: #005a9c;
+  }
+
+  /* Mouse hover  */
+  .v-table .v-table__wrapper > table > tbody > tr.hover {
+    background-color: #adddff !important;
+  }
 </style>
