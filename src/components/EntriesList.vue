@@ -189,6 +189,7 @@ let handleKeyEvent = (e) => {
         }
         setFocus(next, row);
       }
+      e.preventDefault();
       break;
     case keyCode.DOWN:
       next = row.nextElementSibling;
@@ -201,6 +202,7 @@ let handleKeyEvent = (e) => {
         }
         setFocus(next, row);
       }
+      e.preventDefault();
       break;
     case keyCode.HOME:
       next = row.parentElement.firstElementChild;
