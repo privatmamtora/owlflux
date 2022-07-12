@@ -53,14 +53,17 @@ watch(selectedItemData, (newValue) => {
     miniflux.getFeedEntries(treeStore.selectedItemData.id, { 'limit': 25, 'order': 'published_at', 'direction': 'desc' })
     .then(data => {
       console.log(data);
-      entriesStore.entries = data;
+
+      entriesStore.entries = data.entries;
+      entriesStore.total = data.total;
     });
   } else if(treeStore.selectedItemData.type === 'category') {
     console.log('Category');
     miniflux.getEntries({ 'category_id': newValue.id, 'limit': 25, 'order': 'published_at', 'direction': 'desc' })
     .then(data => {      
       console.log(data);
-      entriesStore.entries = data;
+      entriesStore.entries = data.entries;
+      entriesStore.total = data.total;
     });
   }
 });
@@ -189,7 +192,7 @@ main {
 }
 
 .icon {
-  height: 1em; 
+  height: 1em;
   max-width: 100%;
 }
 </style>

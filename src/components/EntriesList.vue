@@ -11,7 +11,7 @@ const entriesStore = useEntriesStore();
 
 const props = defineProps({
   data: {
-    type: Object,
+    type: Array,
     required: true
   }
 });
@@ -285,7 +285,7 @@ watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) =
       @keydown.stop="handleKeyEvent"
       @focus.capture.stop="onFocus"
       @blur.capture.stop="onBlur">
-      <template v-for="(entry, index) in props.data.entries" :key="entry.id" >
+      <template v-for="(entry, index) in props.data" :key="entry.id" >
         <EntryListItem :node="entry" :index="index" />
       </template>
     </tbody>
