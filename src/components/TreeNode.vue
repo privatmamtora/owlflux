@@ -75,8 +75,6 @@ let selectNode = (e) => {
     setFocus(node, treeStore.selectedItem);
     treeStore.selectedItem = node;
     treeStore.selectedItemData = props.node;
-    entriesStore.selectedEntry = '';
-    entriesStore.otherSelected = [];
   }
 }
 

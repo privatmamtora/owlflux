@@ -1,7 +1,8 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onBeforeUpdate, onUpdated, onBeforeMount, onMounted } from 'vue'
 import { useEntriesStore } from '../stores/entries'
 import { watchArray } from '@vueuse/core'
+import { useInfiniteScroll } from '@vueuse/core'
 
 import EntryListItem from "../components/EntryListItem.vue";
 
@@ -10,8 +11,8 @@ console.log('Reload Entries List')
 const entriesStore = useEntriesStore();
 
 const props = defineProps({
-  data: {
-    type: Array,
+  selectedFeed: {
+    type: Object,
     required: true
   }
 });
@@ -245,36 +246,67 @@ let handleKeyEvent = (e) => {
   }
 }
 
-watch(()=> entriesStore.selectedEntry, (newValue, oldValue) => {
-  console.log('watch old', oldValue);
-  console.log('watch new', newValue);
-  if (oldValue) {
-    let row = getRowById(oldValue);
-    row.setAttribute('aria-selected', 'false');
-  }
-  if (newValue) {
-    let row = getRowById(newValue);
-    row.setAttribute('aria-selected', 'true');
-  }
+let unWatchSelected;
+let unWatchOSelected;
+
+useInfiniteScroll(tbody, () => {
+ console.log('loading more');
+ entriesStore.loadMore();
 });
 
-watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) => {
-  console.log(added)
-  if (added.length) {
-    for (const id of added) {
-      let row = getRowById(id);
-      row.setAttribute('aria-selected', 'true');
-    }
+onBeforeMount(() => {
+  console.log('Before Mounted');
+  entriesStore.loadMore();
+});
+
+onMounted(() => {
+  console.log('Mounted');
+})
+
+onBeforeUpdate(()=> {
+  console.log('Before Updated');
+  if(unWatchSelected) {
+    unWatchSelected();
   }
-  console.log(removed)
-  if (removed.length) {
-    for (const id of removed) {
-      let row = getRowById(id);
+  if(unWatchOSelected) {
+    unWatchOSelected();
+  }
+  entriesStore.$reset();
+  entriesStore.loadMore();
+});
+
+onUpdated(()=> {
+  console.log('Updated');
+  unWatchSelected = watch(()=> entriesStore.selectedEntry, (newValue, oldValue) => {
+    console.log('watch old', oldValue);
+    console.log('watch new', newValue);
+    if (oldValue) {
+      let row = getRowById(oldValue);
       row.setAttribute('aria-selected', 'false');
     }
-  }
-}, { deep: true });
+    if (newValue) {
+      let row = getRowById(newValue);
+      row.setAttribute('aria-selected', 'true');
+    }
+  });
 
+  unWatchOSelected = watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) => {
+    console.log(added)
+    if (added.length) {
+      for (const id of added) {
+        let row = getRowById(id);
+        row.setAttribute('aria-selected', 'true');
+      }
+    }
+    console.log(removed)
+    if (removed.length) {
+      for (const id of removed) {
+        let row = getRowById(id);
+        row.setAttribute('aria-selected', 'false');
+      }
+    }
+  }, { deep: true });
+});
 </script>
 
 <template>
@@ -285,7 +317,7 @@ watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) =
       @keydown.stop="handleKeyEvent"
       @focus.capture.stop="onFocus"
       @blur.capture.stop="onBlur">
-      <template v-for="(entry, index) in props.data" :key="entry.id" >
+      <template v-for="(entry, index) in entriesStore.entries" :key="entry.id" >
         <EntryListItem :node="entry" :index="index" />
       </template>
     </tbody>

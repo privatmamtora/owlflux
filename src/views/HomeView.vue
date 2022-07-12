@@ -46,28 +46,6 @@ try {
   console.log(e);
 }
 
-watch(selectedItemData, (newValue) => {
-  console.log('new', newValue);
-  if(treeStore.selectedItemData.type === 'feed') {
-    console.log('Feed');
-    miniflux.getFeedEntries(treeStore.selectedItemData.id, { 'limit': 25, 'order': 'published_at', 'direction': 'desc' })
-    .then(data => {
-      console.log(data);
-
-      entriesStore.entries = data.entries;
-      entriesStore.total = data.total;
-    });
-  } else if(treeStore.selectedItemData.type === 'category') {
-    console.log('Category');
-    miniflux.getEntries({ 'category_id': newValue.id, 'limit': 25, 'order': 'published_at', 'direction': 'desc' })
-    .then(data => {      
-      console.log(data);
-      entriesStore.entries = data.entries;
-      entriesStore.total = data.total;
-    });
-  }
-});
-
 const init = async () => {
   try {
     let feeds = await miniflux.getFeeds();
@@ -169,7 +147,7 @@ init();
             </v-card>
           </Pane>
           <Pane min-size="30" :size="paneSize2">
-            <EntriesList v-if="selectedText" :data="entriesStore.entries" />
+            <EntriesList v-if="selectedText" :selected-feed="selectedItemData" />
           </Pane>
           <Pane min-size="30" :size="100-paneSize1-paneSize2">
             <v-card v-if="entriesStore.selectedEntry" v-html="entriesStore.selectedContent"></v-card>
