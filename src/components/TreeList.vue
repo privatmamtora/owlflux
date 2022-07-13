@@ -21,15 +21,17 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <nav class="tree">
-    <ul class="tree-list" role="tree" aria-label="Feeds List">
-      <TreeNode v-for="(node, index) in treeStore.treeData"
-        :key="node.id" 
-        :node="node" 
-        :aria-expanded="props.expanded"
-        :index="index"></TreeNode>
-    </ul>
-  </nav>
+  <v-sheet>
+    <nav class="tree">
+      <ul class="tree-list" role="tree" aria-label="Feeds List">
+        <TreeNode v-for="(node, index) in treeStore.treeData"
+          :key="node.id"
+          :node="node"
+          :aria-expanded="props.expanded"
+          :index="index"></TreeNode>
+      </ul>
+    </nav>
+  </v-sheet>
 </template>
 
 <style>

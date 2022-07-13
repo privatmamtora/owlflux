@@ -66,9 +66,7 @@ function saveSize(name, e) {
     <template v-if="!mobile">
       <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
         <Pane min-size="20" :size="paneSize1">
-          <v-card>
             <TreeList />
-          </v-card>
         </Pane>
         <Pane min-size="30" :size="paneSize2">
           <EntryList v-if="selectedText" :selected-feed="selectedItemData" />

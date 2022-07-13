@@ -31,7 +31,7 @@ onUpdated(()=> {
 </script>
 
 <template>
-  <v-card v-html="props.selectedEntry.content"></v-card>
+  <v-sheet v-html="props.selectedEntry.content"></v-sheet>
 </template>
 
 <style>
