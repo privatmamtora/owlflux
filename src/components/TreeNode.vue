@@ -65,13 +65,14 @@ let selectNode = (e) => {
   if (node.tagName !== 'LI') {
     node = node.closest('LI');
   }
-  if(treeStore.selectedItem !== node) {
-    if(treeStore.selectedItem) {
-      treeStore.selectedItem.setAttribute('aria-selected', 'false');
+
+  let selectedNode = node.closest('[role="tree"]').querySelector('LI[role="treeitem"][aria-selected="true"]');
+  if(selectedNode !== node) {
+    if(selectedNode) {
+      selectedNode.setAttribute('aria-selected', 'false');
     }
     node.setAttribute('aria-selected', 'true');
-    setFocus(node, treeStore.selectedItem);
-    treeStore.selectedItem = node;
+    setFocus(node, selectedNode);
     treeStore.selectedItemData = props.node;
   }
 }

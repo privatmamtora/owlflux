@@ -8,7 +8,6 @@ import { MinifluxApi } from '../util/miniflux';
 export const useTreeStore = defineStore({
   id: 'Tree',
   state: () => ({
-    selectedItem: false,
     selectedItemData: {},
     treeData: {},
     iconData: useStorage('icon-data', []),
@@ -16,8 +15,8 @@ export const useTreeStore = defineStore({
   }),
   getters: {
     selectedText (state) {
-      if (state.selectedItem) {
-        return state.selectedItem.querySelector('.label').innerText;
+      if (state.selectedItemData && state.selectedItemData.title) {
+        return state.selectedItemData.title;
       }
       return '';
     },
