@@ -12,6 +12,7 @@ import { useErrorStore } from '../stores/error'
 
 import TreeList from "../components/TreeList.vue";
 import EntriesList from "../components/EntriesList.vue";
+import Entry from "../components/Entry.vue";
 
 const settingsStore = useSettingsStore();
 const treeStore = useTreeStore();
@@ -73,7 +74,7 @@ function saveSize(name, e) {
           <EntriesList v-if="selectedText" :selected-feed="selectedItemData" />
         </Pane>
         <Pane min-size="30" :size="100-paneSize1-paneSize2">
-          <v-card v-if="entriesStore.selectedEntry" v-html="entriesStore.selectedContent"></v-card>
+          <Entry v-if="entriesStore.selectedEntry" :selected-entry="entriesStore.getSelectedEntry" />
         </Pane>
       </Splitpanes>
     </template>

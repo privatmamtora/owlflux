@@ -1,9 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useTreeStore } from '../stores/tree'
-import { useEntriesStore } from '../stores/entries'
 const treeStore = useTreeStore();
-const entriesStore = useEntriesStore();
 
 const props = defineProps({
   node: {

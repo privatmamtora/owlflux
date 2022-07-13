@@ -23,6 +23,13 @@ export const useEntriesStore = defineStore({
       }
       return items;
     },
+    getSelectedEntry (state) {
+      if (state.selectedEntry) {
+        let entry = state.entries.find(ent => ent.id == state.selectedEntry);
+        return entry;
+      }
+      return;
+    },
     selectedContent (state) {
       if (state.selectedEntry) {
         let entry = state.entries.find(ent => ent.id == state.selectedEntry);
