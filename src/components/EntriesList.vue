@@ -384,6 +384,7 @@ onUpdated(()=> {
     display: block;
     overflow-y: auto;
     max-height: calc(100vh - 48px);
+    user-select: none;
   }
 
   .v-table .v-table__wrapper > table > tbody > tr {
