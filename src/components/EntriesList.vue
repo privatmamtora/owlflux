@@ -286,7 +286,7 @@ let unWatchOSelected;
 useInfiniteScroll(tbody, () => {
  console.log('loading more');
  entriesStore.loadMore();
-});
+},{ distance: 10 });
 
 onBeforeMount(() => {
   console.log('Before Mounted');
