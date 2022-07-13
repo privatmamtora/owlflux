@@ -269,7 +269,7 @@ function mouseOut(e) {
 <template>
   <li role="treeitem" 
     aria-selected="false"
-    :aria-expanded="hasChildren && showChildren"    
+    :aria-expanded="hasChildren && showChildren"
     @keydown.stop="handleKeyEvent"
     @click.stop="selectNode"
     @focus.stop="onFocus"

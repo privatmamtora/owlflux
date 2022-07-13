@@ -11,7 +11,7 @@ import { useEntriesStore } from '../stores/entries'
 import { useErrorStore } from '../stores/error'
 
 import TreeList from "../components/TreeList.vue";
-import EntriesList from "../components/EntriesList.vue";
+import EntryList from "../components/EntryList.vue";
 import Entry from "../components/Entry.vue";
 
 const settingsStore = useSettingsStore();
@@ -71,7 +71,7 @@ function saveSize(name, e) {
           </v-card>
         </Pane>
         <Pane min-size="30" :size="paneSize2">
-          <EntriesList v-if="selectedText" :selected-feed="selectedItemData" />
+          <EntryList v-if="selectedText" :selected-feed="selectedItemData" />
         </Pane>
         <Pane min-size="30" :size="100-paneSize1-paneSize2">
           <Entry v-if="entriesStore.selectedEntry" :selected-entry="entriesStore.getSelectedEntry" />

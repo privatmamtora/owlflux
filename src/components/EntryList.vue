@@ -137,22 +137,6 @@ function nextElementPage(row, direction) {
   return tbody.value.rows[index];
 }
 
-let onFocus = (e) => {
-  let node = e.target;
-  if (node.tagName !== 'TR') {
-    return;
-  }
-  node.classList.add('focus');
-}
-
-let onBlur = (e) => {
-  let node = e.target;
-  if (node.tagName !== 'TR') {
-    return;
-  }
-  node.classList.remove('focus');
-}
-
 let handleClick = (e) => {
   if (e.altKey || e.metaKey) {
     return;
@@ -334,9 +318,7 @@ onUpdated(()=> {
     density="compact">
     <tbody ref="tbody"
       @click.stop="handleClick"
-      @keydown.stop="handleKeyEvent"
-      @focus.capture.stop="onFocus"
-      @blur.capture.stop="onBlur">
+      @keydown.stop="handleKeyEvent">
       <template v-for="(entry, index) in entriesStore.entries" :key="entry.id" >
         <EntryListItem :node="entry" :index="index" />
       </template>

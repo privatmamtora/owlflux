@@ -50,6 +50,22 @@ function getIcon(entry) {
   return '';  
 }
 
+let onFocus = (e) => {
+  let node = e.target;
+  if (node.tagName !== 'TR') {
+    return;
+  }
+  node.classList.add('focus');
+}
+
+let onBlur = (e) => {
+  let node = e.target;
+  if (node.tagName !== 'TR') {
+    return;
+  }
+  node.classList.remove('focus');
+}
+
 function mouseOver(e) {
 	let node = e.target;	
 	if (node.tagName !== 'TR') {
@@ -80,14 +96,16 @@ if (props.node.status === 'unread') {
 	<tr :data-feed-id="node.id"
 		aria-selected="false"
 		:class="status"
-		:tabIndex="props.index == 0 ? '0' : '-1'"		
+		:tabIndex="props.index == 0 ? '0' : '-1'"
+    @focus.capture.stop="onFocus"
+    @blur.capture.stop="onBlur"
     @mouseover.stop="mouseOver"
     @mouseout.stop="mouseOut">
 		<td class="icon"
 			v-if="hasIcon(node)">
 			<img class="icon" :src="getIcon(node)" />
 		</td>
-		<td>{{ node.title }}</td>        
+		<td>{{ node.title }}</td>
 		<td style="width: 0.1%;">
 			<span style="white-space: nowrap;">{{ formatDate(node.published_at) }}</span>
 		</td>
