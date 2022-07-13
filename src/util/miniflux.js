@@ -1,20 +1,35 @@
-import { CustomError } from './error';
+import { useErrorStore } from '../stores/error'
 
 const API_VERSION = 1;
 
+class ConfigurationError extends Error {
+  constructor(message) {
+    super(message);
+  }
+}
+
 class MinifluxApi {
 	constructor(serverURL, apiKey) {
-		serverURL = serverURL.trim();
-		apiKey = apiKey.trim();
+		try {
+			serverURL = serverURL.trim();
+			apiKey = apiKey.trim();
 
-		if (!serverURL || !apiKey) {
-			throw new CustomError('Missing required Settings: Host and/or API Key', 'Configuration Error')
+			if (!serverURL || !apiKey) {
+				throw new ConfigurationError('Missing required Settings: Host and/or API Key');
+			}
+			if (serverURL.endsWith('/')) {
+				serverURL = serverURL.slice(0, -1);
+			}
+			this._base_url = serverURL;
+			this._api_key = apiKey;
+		} catch (e) {
+			const errorStore = useErrorStore();
+			if (e instanceof ConfigurationError) {
+				errorStore.setError(e, e.message, 'Configuration Error');
+			} else {
+				errorStore.setError(e, e.message);
+			}
 		}
-		if (serverURL.endsWith('/')) {
-			serverURL = serverURL.slice(0, -1);
-		}
-		this._base_url = serverURL;
-		this._api_key = apiKey;
 	}
 
 	#getEndpoint(resource) {
@@ -44,24 +59,25 @@ class MinifluxApi {
 				}
 			})
 			.catch(async (e) => {
+				const errorStore = useErrorStore();
 				console.log(e);
 				if (e instanceof TypeError) {
-					throw new CustomError(e.message, 'Type Error');
+					errorStore.setError(e, e.message, 'Type Error');
 				} else if (e instanceof Response) {
 					const contentType = e.headers.get('content-type');
 					if (contentType && contentType.indexOf('application/json') !== -1) {
 						let r = await e.json();
-						throw new CustomError(e.status + ': ' + r['error_message'],'Response Error');
+						errorStore.setError(e, e.status + ': ' + r['error_message'], 'Response Error')
 					} else {
 						let r = await e.text();
-						throw new CustomError(e.status + ': ' + r, 'Response Error');
+
+						errorStore.setError(e, e.status + ': ' + r, 'Response Error')
 					}
 				} else if (typeof e === 'object') {
-					throw new CustomError(e.message, e.constructor.name + ' Error');
+					errorStore.setError(e, e.message, e.constructor.name + ' Error');
 				} else {
-					throw new CustomError(String(e), 'Unknown Error');
+					errorStore.setError(e, String(e), 'Unknown Error');
 				}
-				// return Promise.reject()
 			});
 	}
 

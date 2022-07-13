@@ -8,6 +8,7 @@ import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 import { useTreeStore } from '../stores/tree'
 import { useEntriesStore } from '../stores/entries'
+import { useErrorStore } from '../stores/error'
 
 import TreeList from "../components/TreeList.vue";
 import EntriesList from "../components/EntriesList.vue";
@@ -15,6 +16,7 @@ import EntriesList from "../components/EntriesList.vue";
 const settingsStore = useSettingsStore();
 const treeStore = useTreeStore();
 const entriesStore = useEntriesStore();
+const errorStore = useErrorStore();
 
 let { settings } = storeToRefs(settingsStore);
 let { selectedText, selectedItemData } = storeToRefs(treeStore);
@@ -25,9 +27,9 @@ let drawer = ref(false);
 let group = ref(null);
 watch(group, () => drawer.value = false);
 
-let showError = ref(false);
-let errorType = ref("");
-let errorText = ref("");
+// let showError = ref(false);
+// let errorType = ref("");
+// let errorText = ref("");
 
 let paneSize1 = ref(settings.value.paneSize ? settings.value.paneSize[0].size : 30);
 let paneSize2 = ref(settings.value.paneSize ? settings.value.paneSize[1].size : 30);
@@ -55,29 +57,29 @@ function saveSize(name, e) {
   </v-app-bar>
   <v-main>
     <v-alert 
-      v-show="showError"
+      v-show="errorStore.hasError"
       density="compact"
-      :title="errorType"
+      :title="errorStore.errorType"
       prominent
-      type="error">{{errorText}}</v-alert>
-      <template v-if="!mobile">        
-        <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
-          <Pane min-size="20" :size="paneSize1">
-            <v-card>
-              <TreeList expanded />
-            </v-card>
-          </Pane>
-          <Pane min-size="30" :size="paneSize2">
-            <EntriesList v-if="selectedText" :selected-feed="selectedItemData" />
-          </Pane>
-          <Pane min-size="30" :size="100-paneSize1-paneSize2">
-            <v-card v-if="entriesStore.selectedEntry" v-html="entriesStore.selectedContent"></v-card>
-          </Pane>
-        </Splitpanes>
-      </template>
-      <template v-else>
-        <div>Mobile</div>
-      </template>
+      type="error">{{errorStore.getMessage}}</v-alert>
+    <template v-if="!mobile">
+      <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
+        <Pane min-size="20" :size="paneSize1">
+          <v-card>
+            <TreeList expanded />
+          </v-card>
+        </Pane>
+        <Pane min-size="30" :size="paneSize2">
+          <EntriesList v-if="selectedText" :selected-feed="selectedItemData" />
+        </Pane>
+        <Pane min-size="30" :size="100-paneSize1-paneSize2">
+          <v-card v-if="entriesStore.selectedEntry" v-html="entriesStore.selectedContent"></v-card>
+        </Pane>
+      </Splitpanes>
+    </template>
+    <template v-else>
+      <div>Mobile</div>
+    </template>
   </v-main>
 </template>
 

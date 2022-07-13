@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 import { MinifluxApi } from '../util/miniflux';
 import { useTreeStore } from '../stores/tree'
+import { useErrorStore } from '../stores/error'
 
 export const useEntriesStore = defineStore({
   id: 'Entries',
@@ -71,6 +72,8 @@ export const useEntriesStore = defineStore({
         Array.prototype.push.apply(this.entries, data.entries);
         console.log(this.entries);
       } catch (e) {
+        const errorStore = useErrorStore();
+        errorStore.setError(e, e.message);
         console.log(e);
       }
     }

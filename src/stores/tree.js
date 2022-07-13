@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useStorage } from '@vueuse/core'
 
 import { useSettingsStore } from '../stores/settings';
+import { useErrorStore } from '../stores/error'
 import { MinifluxApi } from '../util/miniflux';
 
 export const useTreeStore = defineStore({
@@ -94,6 +95,8 @@ export const useTreeStore = defineStore({
         this.unreadCounters = counters.unreads;
         console.log(counters);
       } catch(e) {
+        const errorStore = useErrorStore();
+        errorStore.setError(e, e.message);
         console.log(e);
       }
     }
