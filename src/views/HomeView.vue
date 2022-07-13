@@ -1,14 +1,13 @@
 <script setup>
 import 'splitpanes/dist/splitpanes.css'
 import { Splitpanes, Pane } from 'splitpanes'
-import { watch, ref, computed } from 'vue'
+import { watch, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 import { useTreeStore } from '../stores/tree'
 import { useEntriesStore } from '../stores/entries'
-import { MinifluxApi } from '../util/miniflux';
 
 import TreeList from "../components/TreeList.vue";
 import EntriesList from "../components/EntriesList.vue";
@@ -18,7 +17,7 @@ const treeStore = useTreeStore();
 const entriesStore = useEntriesStore();
 
 let { settings } = storeToRefs(settingsStore);
-let { selectedText, iconData, selectedItemData } = storeToRefs(treeStore);
+let { selectedText, selectedItemData } = storeToRefs(treeStore);
 
 const { mobile } = useDisplay()
 
@@ -35,84 +34,6 @@ let paneSize2 = ref(settings.value.paneSize ? settings.value.paneSize[1].size : 
 function saveSize(name, e) {
   settings.value.paneSize = e;
 }
-
-let miniflux;
-try {
-  miniflux = new MinifluxApi(settings.value.host, settings.value.key);
-} catch (e) {
-  showError.value = true;
-  errorType.value = e.title;
-  errorText.value = e.message;
-  console.log(e);
-}
-
-const init = async () => {
-  try {
-    let feeds = await miniflux.getFeeds();
-    console.log(await miniflux.me());
-    console.log(feeds);
-    let categories = [];
-
-    let currentIcons = iconData.value || [];
-    let getIcons = [];
-
-    for (let feed of feeds) {
-      // Find unique categories
-      if (!categories.find((c) => c.id === feed.category.id)) {
-        let cat = feed.category;
-        cat.type = "category";
-        categories.push(cat);
-      }
-      // Check if Icon cached
-      if (feed.icon) {
-        if (!currentIcons.find((i) => i.id === feed.icon.icon_id)) {
-          getIcons.push(miniflux.getFeedIcon(feed.id));
-        }
-      }
-    }
-    if (getIcons.length) {
-      let newIconSet = await Promise.all(getIcons);
-      iconData.value = currentIcons.concat(newIconSet);
-    }
-
-    const feedTree = [
-      { id: -1, title: 'All' },
-      {
-        id: -2,
-        title: 'Starred'
-      },
-    ];
-
-    categories.sort((a, b) => a.title.localeCompare(b.title));
-    for(let cat of categories) {
-      let children = [];
-      let catFeeds = feeds.filter((f) => f.category.id === cat.id)
-                          .sort((a, b) => a.title.localeCompare(b.title));
-      for(let feed of catFeeds) {
-        feed.type = "feed";
-        if (feed.icon) {
-          feed.icon.data = 'data:' + treeStore.getIconById(feed.icon.icon_id).data;
-        }
-        children.push(feed);
-      }
-      cat.children = children;
-      feedTree.push(cat);
-    }
-    treeStore.treeData = feedTree;
-    console.log(feedTree);
-
-    let counters = await miniflux.getFeedCounters();
-    treeStore.unreadCounters = counters.unreads;
-    console.log(counters);
-
-  } catch (e) {
-    showError.value = true;
-    errorType.value = e.title;
-    errorText.value = e.message;
-    console.log(e);
-  }
-}
-init();
 
 </script>
 
@@ -143,7 +64,7 @@ init();
         <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
           <Pane min-size="20" :size="paneSize1">
             <v-card>
-              <TreeList :tree-data="treeStore.treeData" expanded />
+              <TreeList expanded />
             </v-card>
           </Pane>
           <Pane min-size="30" :size="paneSize2">
