@@ -49,6 +49,7 @@ function setFocus(next, curr) {
 }
 
 function selectRow(newRow, ctrlKey, shiftKey) {
+  console.log('select', newRow, 'ctrl', ctrlKey, 'shift', shiftKey);
   // Update EntriesStore
   let id = newRow.getAttribute('data-feed-id');
   console.log('current selected', entriesStore.selectedEntry);
@@ -73,28 +74,7 @@ function selectRow(newRow, ctrlKey, shiftKey) {
         }
       } else if (shiftKey) {
         // Select between selectedEntry and new row
-        let selectedRow = getRowById(entriesStore.selectedEntry);
-        let startIndex = selectedRow.rowIndex;
-        let endIndex = newRow.rowIndex;
-        let range = [];
-        if (endIndex > startIndex) {
-          // After
-          let count = endIndex - startIndex;
-          while (count > 0 && selectedRow.nextElementSibling) {
-            selectedRow = selectedRow.nextElementSibling;
-            range.push(selectedRow.getAttribute('data-feed-id'));
-            count--;
-          }
-        } else {
-          // Before
-          let count = startIndex - endIndex;
-          while (count > 0 && selectedRow.previousElementSibling) {
-            selectedRow = selectedRow.previousElementSibling;
-            range.push(selectedRow.getAttribute('data-feed-id'));
-            count--;
-          }
-        }
-        entriesStore.otherSelected = range;
+        shiftSelectRow(newRow);
       } else {
         entriesStore.selectedEntry = id;
         console.log('newly selected', entriesStore.selectedEntry);
@@ -289,16 +269,49 @@ useInfiniteScroll(tbody, () => {
 },{ distance: 10 });
 
 onBeforeMount(() => {
-  console.log('Before Mounted');
+  console.log('Entries: Before Mounted');
   entriesStore.loadMore();
 });
 
 onMounted(() => {
-  console.log('Mounted');
+  console.log('Entries: Mounted');
 })
 
+const selectedWatch = (newValue, oldValue) => {
+  console.log('watch old', oldValue);
+  console.log('watch new', newValue);
+  if (oldValue) {
+    let row = getRowById(oldValue);
+    row.setAttribute('aria-selected', 'false');
+  }
+  if (newValue) {
+    let row = getRowById(newValue);
+    row.setAttribute('aria-selected', 'true');
+  }
+}
+
+const otherWatch = (newList, oldList, added, removed) => {
+  console.log('Other Added', added)
+  if (added.length) {
+    for (const id of added) {
+      let row = getRowById(id);
+      row.setAttribute('aria-selected', 'true');
+    }
+  }
+  console.log('Other Added', removed)
+  if (removed.length) {
+    for (const id of removed) {
+      let row = getRowById(id);
+      row.setAttribute('aria-selected', 'false');
+    }
+  }
+}
+
+unWatchSelected = watch(()=> entriesStore.selectedEntry, selectedWatch);
+unWatchOSelected = watchArray(()=> entriesStore.otherSelected, otherWatch, { deep: true });
+
 onBeforeUpdate(()=> {
-  console.log('Before Updated');
+  console.log('Entries: Before Updated');
   if(unWatchSelected) {
     unWatchSelected();
   }
@@ -310,36 +323,9 @@ onBeforeUpdate(()=> {
 });
 
 onUpdated(()=> {
-  console.log('Updated');
-  unWatchSelected = watch(()=> entriesStore.selectedEntry, (newValue, oldValue) => {
-    console.log('watch old', oldValue);
-    console.log('watch new', newValue);
-    if (oldValue) {
-      let row = getRowById(oldValue);
-      row.setAttribute('aria-selected', 'false');
-    }
-    if (newValue) {
-      let row = getRowById(newValue);
-      row.setAttribute('aria-selected', 'true');
-    }
-  });
-
-  unWatchOSelected = watchArray(()=> entriesStore.otherSelected, (newList, oldList, added, removed) => {
-    console.log(added)
-    if (added.length) {
-      for (const id of added) {
-        let row = getRowById(id);
-        row.setAttribute('aria-selected', 'true');
-      }
-    }
-    console.log(removed)
-    if (removed.length) {
-      for (const id of removed) {
-        let row = getRowById(id);
-        row.setAttribute('aria-selected', 'false');
-      }
-    }
-  }, { deep: true });
+  console.log('Entries: Updated');
+  unWatchSelected = watch(()=> entriesStore.selectedEntry, selectedWatch);
+  unWatchOSelected = watchArray(()=> entriesStore.otherSelected, otherWatch, { deep: true });
 });
 </script>
 
