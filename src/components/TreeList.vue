@@ -9,7 +9,7 @@ const treeStore = useTreeStore();
 const props = defineProps({
   expanded: {
     type: Boolean,
-    default: false
+    default: true
   }
 });
 

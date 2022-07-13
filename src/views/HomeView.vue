@@ -67,7 +67,7 @@ function saveSize(name, e) {
       <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
         <Pane min-size="20" :size="paneSize1">
           <v-card>
-            <TreeList expanded />
+            <TreeList />
           </v-card>
         </Pane>
         <Pane min-size="30" :size="paneSize2">
