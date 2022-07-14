@@ -254,7 +254,9 @@ useInfiniteScroll(tbody, () => {
 
 onBeforeMount(() => {
   console.log('Entries: Before Mounted');
-  entriesStore.loadMore();
+  if (!entriesStore.entries.length) {
+    entriesStore.loadMore();
+  }
 });
 
 onMounted(() => {
