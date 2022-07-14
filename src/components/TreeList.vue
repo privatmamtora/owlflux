@@ -21,7 +21,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <v-sheet>
+  <v-card>
     <nav class="tree">
       <ul class="tree-list" role="tree" aria-label="Feeds List">
         <TreeNode v-for="(node, index) in treeStore.treeData"
@@ -31,7 +31,7 @@ onBeforeMount(() => {
           :index="index"></TreeNode>
       </ul>
     </nav>
-  </v-sheet>
+  </v-card>
 </template>
 
 <style>

@@ -9,12 +9,12 @@ const tabs = [
 </script>
 
 <template>
-  <v-app-bar color="primary" density="compact">  
+  <v-app-bar density="compact">
     <v-btn icon to="/">      
-    <v-icon>mdi-arrow-left</v-icon>
-  </v-btn>
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
     <v-toolbar-title>Settings</v-toolbar-title>
-    </v-app-bar>
+  </v-app-bar>
   <v-main>
     <v-tabs grow>
       <v-tab v-for="tab of tabs" :key="tab.id" :to="tab.route">{{ tab.name}}</v-tab>

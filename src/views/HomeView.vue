@@ -66,7 +66,10 @@ function saveSize(name, e) {
     <template v-if="!mobile">
       <Splitpanes class="default-theme" @resized="saveSize('resized', $event)">
         <Pane min-size="20" :size="paneSize1">
-            <TreeList />
+            <div class="d-flex flex-column justify-space-between" style="min-height: 100%;">
+              <TreeList class=""/>
+              <v-btn append-icon="mdi-cog" to="/settings">Settings</v-btn>
+            </div>
         </Pane>
         <Pane min-size="30" :size="paneSize2">
           <EntryList v-if="selectedText" :selected-feed="selectedItemData" />
