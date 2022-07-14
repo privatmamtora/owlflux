@@ -120,5 +120,15 @@ if (props.node.status === 'unread') {
 .v-table > .v-table__wrapper > table > tfoot > tr > td.icon,
 .v-table > .v-table__wrapper > table > tfoot > tr > th.icon {
   padding: 0 8px 0 4px;
+  vertical-align: middle;
+}
+
+.v-table > .v-table__wrapper > table > tbody > tr > td .icon,
+.v-table > .v-table__wrapper > table > tbody > tr > th .icon,
+.v-table > .v-table__wrapper > table > thead > tr > td .icon,
+.v-table > .v-table__wrapper > table > thead > tr > th .icon,
+.v-table > .v-table__wrapper > table > tfoot > tr > td .icon,
+.v-table > .v-table__wrapper > table > tfoot > tr > th .icon {
+  max-height: 1em;
 }
 </style>

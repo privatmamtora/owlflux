@@ -86,16 +86,11 @@ function saveSize(name, e) {
 </template>
 
 <style type="text/css">
-.splitpanes__pane {
-  overflow: auto;
-}
+  .splitpanes__pane {
+    overflow: auto;
+  }
 
-main {
-  height: 0vh;
-}
-
-.icon {
-  height: 1em;
-  max-width: 100%;
-}
+  main {
+    height: 0vh;
+  }
 </style>
