@@ -16,7 +16,7 @@ const tabs = [
     <v-toolbar-title>Settings</v-toolbar-title>
   </v-app-bar>
   <v-main>
-    <v-tabs grow>
+    <v-tabs grow density="compact">
       <v-tab v-for="tab of tabs" :key="tab.id" :to="tab.route">{{ tab.name}}</v-tab>
     </v-tabs>
     <RouterView/>
@@ -30,5 +30,9 @@ const tabs = [
     display: flex;
     align-items: center;
   }
+}
+
+.v-tabs--horizontal .v-btn.v-btn--density-default {
+  height: var(--v-btn-height);
 }
 </style>
