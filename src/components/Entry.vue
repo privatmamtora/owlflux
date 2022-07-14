@@ -14,19 +14,19 @@ const props = defineProps({
 });
 
 onBeforeMount(() => {
-  console.log('Entry: Before Mounted');
+  console.log('Entry Content: Before Mounted');
 });
 
 onMounted(() => {
-  console.log('Entry: Mounted');
+  console.log('Entry Content: Mounted');
 })
 
 onBeforeUpdate(()=> {
-  console.log('Entry: Before Updated');
+  console.log('Entry Content: Before Updated');
 });
 
 onUpdated(()=> {
-  console.log('Entry: Updated');
+  console.log('Entry Content: Updated');
 });
 </script>
 

@@ -13,6 +13,8 @@ const props = defineProps({
   }
 });
 
+console.log('Reload Tree');
+
 onBeforeMount(() => {
   console.log('Tree: Before Mounted');
   treeStore.load();

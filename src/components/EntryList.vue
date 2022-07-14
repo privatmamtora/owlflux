@@ -6,7 +6,7 @@ import { useInfiniteScroll } from '@vueuse/core'
 
 import EntryListItem from "../components/EntryListItem.vue";
 
-console.log('Reload Entries List')
+console.log('Reload Entries List');
 
 const entriesStore = useEntriesStore();
 

@@ -68,7 +68,9 @@ let selectNode = (e) => {
 
   let selectedNode = node.closest('[role="tree"]').querySelector('LI[role="treeitem"][aria-selected="true"]');
   if(selectedNode !== node) {
+    //  Not the same item
     if(selectedNode) {
+      // Unselect currently selected
       selectedNode.setAttribute('aria-selected', 'false');
     }
     node.setAttribute('aria-selected', 'true');
