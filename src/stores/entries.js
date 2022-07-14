@@ -19,7 +19,7 @@ export const useEntriesStore = defineStore({
         items.push(state.entries.find(ent => ent.id == state.selectedEntry));
       }
       if (state.otherSelected && state.otherSelected.length) {
-        items.push(state.entries.filter(ent => state.otherSelected.includes(ent.id)));
+        items.push(state.entries.filter(ent => state.otherSelected.includes(ent.id + '')));
       }
       return items;
     },
@@ -36,6 +36,20 @@ export const useEntriesStore = defineStore({
         return entry.content;
       }
       return '';
+    },
+    isSelected: (state) => {
+      return (id) => {
+        // console.log('Check if ' + id + ' is selected in', state.selectedEntry, state.otherSelected);
+        if (state.selectedEntry == id) {
+          // console.log('Selected Entry');
+          return true;
+        }
+        if (state.otherSelected && state.otherSelected.length && state.otherSelected.includes(id + '')) {
+          // console.log('Other Selected Entry');
+          return true;
+        }
+        return false;
+      }
     },
   },
   actions: {

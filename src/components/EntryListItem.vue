@@ -2,8 +2,10 @@
 import { ref, computed } from 'vue';
 
 import { useTreeStore } from '../stores/tree';
+import { useEntriesStore } from '../stores/entries';
 
 const treeStore = useTreeStore();
+const entriesStore = useEntriesStore();
 
 const props = defineProps({
 	node: {
@@ -91,10 +93,15 @@ if (props.node.status === 'unread') {
 	status = 'unread';
 }
 
+let selected = "false";
+if (entriesStore.isSelected(props.node.id)) {
+  selected = "true";
+}
+
 </script>
 <template>
 	<tr :data-feed-id="node.id"
-		aria-selected="false"
+		:aria-selected="selected"
 		:class="status"
 		:tabIndex="props.index == 0 ? '0' : '-1'"
     @focus.capture.stop="onFocus"

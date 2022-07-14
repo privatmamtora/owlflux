@@ -41,9 +41,24 @@ const keyCode = Object.freeze({
   DOWN: 40,
 });
 
+const isEqual = function (var1, var2) {
+  if (typeof var1 === 'object' && typeof var2 === 'object') {
+    // Checking equality for each of the inner values of the objects
+    const keys = [...new Set([...Object.keys(var1),...Object.keys(var2)])];
+    return keys.every(key => isEqual(var1[key], var2[key]) && isEqual(var2[key], var1[key]));
+  } else { // Primitive types (number, boolean etc..)
+    return var1 === var2; // Normal equality
+  }
+}
+
 let showChildren = ref(props.ariaExpanded);
 let currentIcon = ref('');
 showChildren.value ? currentIcon.value = 'mdi-chevron-down' : currentIcon.value = 'mdi-chevron-right';
+
+let selected = 'false';
+if (isEqual(treeStore.selectedItemData, props.node)) {
+  selected = 'true';
+}
 
 let toggleChildren = () => { 
   showChildren.value = !showChildren.value;
@@ -271,7 +286,7 @@ function mouseOut(e) {
 
 <template>
   <li role="treeitem" 
-    aria-selected="false"
+    :aria-selected="selected"
     :aria-expanded="hasChildren && showChildren"
     @keydown.stop="handleKeyEvent"
     @click.stop="selectNode"
