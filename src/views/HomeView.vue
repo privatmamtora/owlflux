@@ -93,4 +93,34 @@ function saveSize(name, e) {
   main {
     height: 0vh;
   }
+
+  .splitpanes.default-theme .splitpanes__pane {
+    background-color: unset;
+  }
+  .splitpanes.default-theme .splitpanes__splitter {
+    --v-theme-overlay-multiplier: var(--v-theme-surface-variant-overlay-multiplier);
+    background-color: rgb(var(--v-theme-surface-variant)) !important;
+  }
+  .splitpanes.default-theme .splitpanes__splitter:before,
+  .splitpanes.default-theme .splitpanes__splitter:after {
+    --v-theme-overlay-multiplier: var(--v-theme-surface-overlay-multiplier);
+    background-color: rgb(var(--v-theme-surface)) !important;
+  }
+  .splitpanes.default-theme .splitpanes__splitter:hover:before,
+  .splitpanes.default-theme .splitpanes__splitter:hover:after {
+    --v-theme-overlay-multiplier: var(--v-theme-surface-overlay-multiplier);
+    background-color: rgb(var(--v-theme-surface)) !important;
+  }
+  .default-theme.splitpanes--vertical > .splitpanes__splitter,
+  .default-theme .splitpanes--vertical > .splitpanes__splitter {
+    --v-theme-overlay-multiplier: var(--v-theme-surface-variant-overlay-multiplier);
+    border-left-color: rgb(var(--v-theme-surface-variant)) !important;
+  }
+  .default-theme.splitpanes--horizontal > .splitpanes__splitter,
+  .default-theme .splitpanes--horizontal > .splitpanes__splitter {
+    --v-theme-overlay-multiplier: var(--v-theme-surface-variant-overlay-multiplier);
+    border-left-color: rgb(var(--v-theme-surface-variant)) !important;
+  }
+
+
 </style>
