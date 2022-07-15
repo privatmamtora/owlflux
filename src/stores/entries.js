@@ -89,7 +89,7 @@ export const useEntriesStore = defineStore({
           data = await miniflux.getEntries(options);
         }
 
-        console.log(this.entries);
+        // console.log(this.entries);
         Array.prototype.push.apply(this.entries, data.entries);
         console.log(this.entries);
       } catch (e) {

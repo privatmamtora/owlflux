@@ -61,7 +61,7 @@ export const useTreeStore = defineStore({
         }
         if (getIcons.length) {
           let newIconSet = await Promise.all(getIcons);
-          this.iconData.value = currentIcons.concat(newIconSet);
+          Array.prototype.push.apply(this.iconData, newIconSet);
         }
 
         const feedTree = [
