@@ -14,7 +14,6 @@ const router = createRouter({
     },
     {
       path: '/settings',
-      name: 'settings',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -25,6 +24,7 @@ const router = createRouter({
       children: [
         {
           path: '',
+          name: 'settings',
           component: () => import('../views/Settings-Core.vue'),
           meta: {
             title: "Core - Settings"
