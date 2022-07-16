@@ -19,9 +19,9 @@ let { settings } = storeToRefs(settingsStore);
       variant="outlined"
       shaped
       v-model="settings.key"></v-text-field>
-  </v-container>
-  <v-container>
-    <div>{{settings.host}}</div>
-    <div>{{settings.key}}</div>    
+    <v-container>
+      <div>{{settings.host}}</div>
+      <div>{{settings.key}}</div>
+    </v-container>
   </v-container>
 </template>
