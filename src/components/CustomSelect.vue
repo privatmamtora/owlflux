@@ -65,10 +65,10 @@ let handleClick = () => {
 }
 
 let handleKeyEvent = (e) => {
-  const { key } = event;
+  const { key } = e;
   const max = props.options.length - 1;
 
-  const action = getActionFromKey(event, open);
+  const action = getActionFromKey(e, open);
 
   switch (action) {
     case SelectActions.Last:
@@ -79,21 +79,21 @@ let handleKeyEvent = (e) => {
     case SelectActions.Previous:
     case SelectActions.PageUp:
     case SelectActions.PageDown:
-      event.preventDefault();
+      e.preventDefault();
       return onOptionChange(
         getUpdatedIndex(activeIndex, max, action)
       );
     case SelectActions.CloseSelect:
-      event.preventDefault();
+      e.preventDefault();
       selectOption(activeIndex);
     // intentional fallthrough
     case SelectActions.Close:
-      event.preventDefault();
+      e.preventDefault();
       return updateMenuState(false);
     case SelectActions.Type:
       return onComboType(key);
     case SelectActions.Open:
-      event.preventDefault();
+      e.preventDefault();
       return updateMenuState(true);
   }
 }
