@@ -36,6 +36,19 @@ class MinifluxApi {
 		return `${this._base_url}/v${API_VERSION}/${resource}`;
 	}
 
+	static #orderOptions = [
+		{ name: 'Published At', value: 'published_at'},
+		{ name: 'Entry ID', value: 'id'},
+		{ name: 'Entry Status', value: 'status'},
+		{ name: 'Entry Created At', value: 'created_at'},
+		{ name: 'Category Title', value: 'category_title'},
+		{ name: 'Category ID', value: 'category_id'}
+	];
+
+	static get orderOptions() {
+    return MinifluxApi.#orderOptions;
+  }
+
 	async apiCall(method, url, body = null) {
 		const params = { headers: { 'X-Auth-Token': this._api_key } };
 		if (body) {
