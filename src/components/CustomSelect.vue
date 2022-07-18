@@ -13,6 +13,11 @@ const props = defineProps({
     required: false,
     default: 0,
   },
+  label: {
+    type: String,
+    required: true,
+    default: '',
+  },
 });
 
 // let selected = props.default
@@ -25,6 +30,7 @@ const props = defineProps({
 // onMounted(()=> {
 //   this.$emit("input", this.selected);
 // });
+const emit = defineEmits(['update:selected']);
 
 let select = ref(null);
 let combo = ref(null);
@@ -170,6 +176,7 @@ function selectOption(index) {
     optionEl.setAttribute('aria-selected', 'false');
   });
   options[index].setAttribute('aria-selected', 'true');
+  emit('update:selected', index);
 }
 
 function updateMenuState(openState, callFocus = true) {
@@ -233,7 +240,7 @@ function getSearchString (char) {
     </div>
   </div> -->
 
-  <label :id="comboId + '-label'" class="combo-label">Favorite Fruit</label>
+  <label :id="comboId + '-label'" class="combo-label">{{ props.label }}</label>
   <div class="combo js-select" ref="select">
     <div
       class="combo-input"
@@ -272,70 +279,6 @@ function getSearchString (char) {
 </template>
 
 <style scoped>
-  /*.custom-select {
-    position: relative;
-    width: 100%;
-    text-align: left;
-    outline: none;
-    height: 47px;
-    line-height: 47px;
-  }
-
-  .custom-select .selected {
-    background-color: #0a0a0a;
-    border-radius: 6px;
-    border: 1px solid #666666;
-    color: #fff;
-    padding-left: 1em;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .custom-select .selected.open {
-    border: 1px solid #ad8225;
-    border-radius: 6px 6px 0px 0px;
-  }
-
-  .custom-select .selected:after {
-    position: absolute;
-    content: "";
-    top: 22px;
-    right: 1em;
-    width: 0;
-    height: 0;
-    border: 5px solid transparent;
-    border-color: #fff transparent transparent transparent;
-  }
-
-  .custom-select .items {
-    color: #fff;
-    border-radius: 0px 0px 6px 6px;
-    overflow: hidden;
-    border-right: 1px solid #ad8225;
-    border-left: 1px solid #ad8225;
-    border-bottom: 1px solid #ad8225;
-    position: absolute;
-    background-color: #0a0a0a;
-    left: 0;
-    right: 0;
-    z-index: 1;
-  }
-
-  .custom-select .items div {
-    color: #fff;
-    padding-left: 1em;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .custom-select .items div:hover {
-    background-color: #ad8225;
-  }
-
-  .selectHide {
-    display: none;
-  }*/
-
   .combo *,
   .combo *::before,
   .combo *::after {
@@ -361,6 +304,11 @@ function getSearchString (char) {
     top: 50%;
     transform: translate(0, -65%) rotate(45deg);
     width: 12px;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .combo.open::after {
+    transform: translate(0, -65%) rotate(225deg);
   }
 
   .combo-input {
@@ -387,8 +335,6 @@ function getSearchString (char) {
 
   .combo-label {
     display: block;
-    font-size: 20px;
-    font-weight: 100;
     margin-bottom: 0.25em;
   }
 
