@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onBeforeUpdate, onUpdated, onBeforeMount, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import { SelectActions, getActionFromKey, getIndexByLetter, getUpdatedIndex, isElementInView, isScrollable, maintainScrollVisibility } from '../util/combo';
 
@@ -60,7 +60,7 @@ let onBlur = () => {
   }
 }
 
-let handleClick = (e) => {
+let handleClick = () => {
   updateMenuState(!open, false);
 }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 
 const router = useRouter();
 let children = router.currentRoute.value.matched.find((r) => r.children && r.children.length).children.sort((a,b) => a.meta.tabIndex - b.meta.tabIndex);

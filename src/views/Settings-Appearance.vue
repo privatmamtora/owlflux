@@ -1,5 +1,5 @@
 <script setup>
-import { watch, reactive, ref } from 'vue'
+import { watch, ref } from 'vue'
 import { useSettingsStore } from '../stores/settings'
 const settingsStore = useSettingsStore();
 
