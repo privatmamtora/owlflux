@@ -4,7 +4,6 @@ import { Splitpanes, Pane } from 'splitpanes'
 import { watch, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
-import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 import { useTreeStore } from '../stores/tree'
 import { useEntriesStore } from '../stores/entries'
@@ -19,9 +18,6 @@ const treeStore = useTreeStore();
 const entriesStore = useEntriesStore();
 const errorStore = useErrorStore();
 
-let { settings } = storeToRefs(settingsStore);
-let { selectedText, selectedItemData } = storeToRefs(treeStore);
-
 const { mobile } = useDisplay()
 
 let drawer = ref(false);
@@ -32,10 +28,10 @@ watch(group, () => drawer.value = false);
 // let errorType = ref("");
 // let errorText = ref("");
 
-let paneSize1 = ref(settings.value.paneSize ? settings.value.paneSize[0].size : 30);
-let paneSize2 = ref(settings.value.paneSize ? settings.value.paneSize[1].size : 30);
+let paneSize1 = ref(settingsStore.settings.paneSize ? settingsStore.settings.paneSize[0].size : 30);
+let paneSize2 = ref(settingsStore.settings.paneSize ? settingsStore.settings.paneSize[1].size : 30);
 function saveSize(name, e) {
-  settings.value.paneSize = e;
+  settingsStore.settings['paneSize'] = e;
 }
 
 </script>
@@ -54,7 +50,7 @@ function saveSize(name, e) {
   </v-navigation-drawer> -->
   <v-app-bar density="compact">
     <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-toolbar-title>{{ selectedText }}</v-toolbar-title>
+    <v-toolbar-title>{{ treeStore.selectedText }}</v-toolbar-title>
   </v-app-bar>
   <v-main>
     <v-alert 
@@ -72,7 +68,7 @@ function saveSize(name, e) {
             </div>
         </Pane>
         <Pane min-size="30" :size="paneSize2">
-          <EntryList v-if="selectedText" :selected-feed="selectedItemData" />
+          <EntryList v-if="treeStore.selectedText" :selected-feed="treeStore.selectedItemData" />
         </Pane>
         <Pane min-size="30" :size="100-paneSize1-paneSize2">
           <Entry v-if="entriesStore.selectedEntry" :selected-entry="entriesStore.getSelectedEntry" />

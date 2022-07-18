@@ -1,16 +1,14 @@
 <script setup>
 import { watch, reactive, ref } from 'vue'
-import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 const settingsStore = useSettingsStore();
-let { settings } = storeToRefs(settingsStore);
 
-let darkMode = ref(settings.value.theme === 'dark' ? true : false);
+let darkMode = ref(settingsStore.settings.theme === 'dark' ? true : false);
 watch(darkMode, async(newData) => {
   if(newData) {
-    settings.value.theme = 'dark';
+    settingsStore.settings.theme = 'dark';
   } else {
-    settings.value.theme = 'light';
+    settingsStore.settings.theme = 'light';
   }
 })
 
@@ -24,7 +22,7 @@ watch(darkMode, async(newData) => {
       v-model="darkMode"></v-switch>
     <v-container>
       <div>Dark Mode: {{ darkMode }}</div>
-      <div>Theme: {{ settings.theme }}</div>
+      <div>Theme: {{ settingsStore.settings.theme }}</div>
       <v-sheet color="background">Background</v-sheet>
       <v-sheet color="error">Error</v-sheet>
       <v-sheet color="info">Info</v-sheet>

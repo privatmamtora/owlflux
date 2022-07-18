@@ -1,7 +1,4 @@
 <script setup>
-import { watch, reactive, ref } from 'vue'
-
-import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
 
 import CustomSelect from "../components/CustomSelect.vue";
@@ -9,17 +6,13 @@ import CustomSelect from "../components/CustomSelect.vue";
 import { MinifluxApi } from '../util/miniflux';
 
 const settingsStore = useSettingsStore();
-let { settings } = storeToRefs(settingsStore);
 
-console.log(MinifluxApi.orderOptions[0]);
 let selected = 0;
 if (settingsStore.settings['orderBy']) {
   selected = MinifluxApi.orderOptions.findIndex(o => o.value === settingsStore.settings['orderBy']);
 }
 
 function updated(index) {
-  console.log(index);
-  console.log(MinifluxApi.orderOptions[index]);
   let newOrder = MinifluxApi.orderOptions[index].value;
   if (settingsStore.settings['orderBy'] !== newOrder) {
     settingsStore.settings['orderBy'] = newOrder;

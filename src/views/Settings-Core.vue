@@ -1,10 +1,6 @@
 <script setup>
-import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '../stores/settings'
-
 const settingsStore = useSettingsStore();
-let { settings } = storeToRefs(settingsStore);
-
 </script>
 
 <template>
@@ -13,15 +9,15 @@ let { settings } = storeToRefs(settingsStore);
       label="Host"
       variant="outlined"
       shaped 
-      v-model="settings.host"></v-text-field>
+      v-model="settingsStore.settings.host"></v-text-field>
     <v-text-field 
       label="API Key" 
       variant="outlined"
       shaped
-      v-model="settings.key"></v-text-field>
+      v-model="settingsStore.settings.key"></v-text-field>
     <v-container>
-      <div>{{settings.host}}</div>
-      <div>{{settings.key}}</div>
+      <div>{{ settingsStore.settings.host }}</div>
+      <div>{{ settingsStore.settings.key }}</div>
     </v-container>
   </v-container>
 </template>
