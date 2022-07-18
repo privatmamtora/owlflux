@@ -62,7 +62,7 @@ export const useEntriesStore = defineStore({
           console.log('First Load');
           options.limit = options.limit + 10;
         } else {
-          if (this.entries.length < this.total) {
+          if (this.entries.length >= this.total) {
             console.log(`All Loaded`);
             return;
           } else {
@@ -91,6 +91,9 @@ export const useEntriesStore = defineStore({
 
         // console.log(this.entries);
         Array.prototype.push.apply(this.entries, data.entries);
+        if (this.total === -1) {
+          this.total = data.total;
+        }
         console.log(this.entries);
       } catch (e) {
         const errorStore = useErrorStore();
