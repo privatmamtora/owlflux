@@ -1,0 +1,442 @@
+<script setup>
+import { ref, watch, onBeforeUpdate, onUpdated, onBeforeMount, onMounted } from 'vue'
+
+import { SelectActions, getActionFromKey, getIndexByLetter, getUpdatedIndex, isElementInView, isScrollable, maintainScrollVisibility } from '../util/combo';
+
+const props = defineProps({
+  options: {
+    type: Array,
+    required: true,
+  },
+  selectedIndex: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+});
+
+// let selected = props.default
+//         ? props.default
+//         : props.options.length > 0
+//         ? props.options[0]
+//         : null;
+// let open = false;
+
+// onMounted(()=> {
+//   this.$emit("input", this.selected);
+// });
+
+let select = ref(null);
+let combo = ref(null);
+let list = ref(null);
+
+// state
+let activeIndex = 0;
+let open = false;
+let searchString = '';
+let searchTimeout = null;
+let ignoreBlur = null;
+let comboId = 'combo' + crypto.randomUUID();
+
+onMounted(() => {
+  combo.value.innerHTML = props.options[props.selectedIndex];
+});
+
+let onBlur = () => {
+  if (ignoreBlur) {
+    ignoreBlur = false;
+    return;
+  }
+
+  if (open) {
+    selectOption(activeIndex);
+    updateMenuState(false, false);
+  }
+}
+
+let handleClick = (e) => {
+  updateMenuState(!open, false);
+}
+
+let handleKeyEvent = (e) => {
+  const { key } = event;
+  const max = props.options.length - 1;
+
+  const action = getActionFromKey(event, open);
+
+  switch (action) {
+    case SelectActions.Last:
+    case SelectActions.First:
+      updateMenuState(true);
+    // intentional fallthrough
+    case SelectActions.Next:
+    case SelectActions.Previous:
+    case SelectActions.PageUp:
+    case SelectActions.PageDown:
+      event.preventDefault();
+      return onOptionChange(
+        getUpdatedIndex(activeIndex, max, action)
+      );
+    case SelectActions.CloseSelect:
+      event.preventDefault();
+      selectOption(activeIndex);
+    // intentional fallthrough
+    case SelectActions.Close:
+      event.preventDefault();
+      return updateMenuState(false);
+    case SelectActions.Type:
+      return onComboType(key);
+    case SelectActions.Open:
+      event.preventDefault();
+      return updateMenuState(true);
+  }
+}
+
+function handleOptionClick(index, e) {
+  e.stopPropagation();
+  onOptionClick(index);
+}
+
+function handleOptionMouseDown() {
+  ignoreBlur = true;
+}
+
+function onOptionClick (index) {
+  onOptionChange(index);
+  selectOption(index);
+  updateMenuState(false);
+}
+
+function onOptionChange (index) {
+  // update state
+  activeIndex = index;
+
+  // update aria-activedescendant
+  combo.value.setAttribute('aria-activedescendant', `${comboId}-${index}`);
+
+  // update active option styles
+  const options = select.value.querySelectorAll('[role=option]');
+  [...options].forEach((optionEl) => {
+    optionEl.classList.remove('option-current');
+  });
+  options[index].classList.add('option-current');
+
+  // ensure the new option is in view
+  if (isScrollable(list.value)) {
+    maintainScrollVisibility(options[index], list.value);
+  }
+
+  // ensure the new option is visible on screen
+  // ensure the new option is in view
+  if (!isElementInView(options[index])) {
+    options[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function onComboType (letter) {
+  // open the listbox if it is closed
+  updateMenuState(true);
+
+  // find the index of the first matching option
+  const cSearchString = getSearchString(letter);
+  const searchIndex = getIndexByLetter(
+    props.options,
+    cSearchString,
+    activeIndex + 1
+  );
+
+  // if a match was found, go to it
+  if (searchIndex >= 0) {
+    onOptionChange(searchIndex);
+  }
+  // if no matches, clear the timeout and search string
+  else {
+    window.clearTimeout(searchTimeout);
+    searchString = '';
+  }
+}
+
+function selectOption(index) {
+  // update state
+  activeIndex = index;
+
+  // update displayed value
+  const selected = props.options[index];
+  combo.value.innerHTML = selected;
+
+  // update aria-selected
+  const options = select.value.querySelectorAll('[role=option]');
+  [...options].forEach((optionEl) => {
+    optionEl.setAttribute('aria-selected', 'false');
+  });
+  options[index].setAttribute('aria-selected', 'true');
+}
+
+function updateMenuState(openState, callFocus = true) {
+  if (open === openState) {
+    return;
+  }
+
+  // update state
+  open = openState;
+
+  // update aria-expanded and styles
+  combo.value.setAttribute('aria-expanded', `${open}`);
+  open ? select.value.classList.add('open') : select.value.classList.remove('open');
+
+  // update activedescendant
+  const activeID = open ? `${comboId}-${activeIndex}` : '';
+  combo.value.setAttribute('aria-activedescendant', activeID);
+
+  if (activeID === '' && !isElementInView(combo.value)) {
+    combo.value.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // move focus back to the combobox, if needed
+  callFocus && combo.value.focus();
+}
+
+function getSearchString (char) {
+  // reset typing timeout and start new timeout
+  // this allows us to make multiple-letter matches, like a native select
+  if (typeof searchTimeout === 'number') {
+    window.clearTimeout(searchTimeout);
+  }
+
+  searchTimeout = window.setTimeout(() => {
+    searchString = '';
+  }, 500);
+
+  // add most recent letter to saved search string
+  searchString += char;
+  return searchString;
+}
+
+</script>
+<template>
+  <!-- <div class="custom-select" :tabindex="tabindex" @blur="open = false">
+    <div class="selected" :class="{ open: open }" @click="open = !open">
+      {{ selected }}
+    </div>
+    <div class="items" :class="{ selectHide: !open }">
+      <div
+        v-for="(option, i) of options"
+        :key="i"
+        @click="
+          selected = option;
+          open = false;
+          $emit('input', option);
+        "
+      >
+        {{ option }}
+      </div>
+    </div>
+  </div> -->
+
+  <label :id="comboId + '-label'" class="combo-label">Favorite Fruit</label>
+  <div class="combo js-select" ref="select">
+    <div
+      class="combo-input"
+      :id="comboId"
+      role="combobox"
+      tabindex="0"
+      :aria-controls="comboId+'-list'"
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      :aria-labelledby="comboId + '-label'"
+      ref="combo"
+
+      @blur.capture.stop="onBlur"
+      @click.stop="handleClick"
+      @keydown.stop="handleKeyEvent">
+    </div>
+    <div
+      class="combo-menu"
+      :id="comboId+'-list'"
+      role="listbox"
+      tabindex="-1"
+      :aria-labelledby="comboId + '-label'"
+      ref="list">
+      <div
+        v-for="(option, i) of props.options"
+        :key="i"
+        :id="comboId+'-'+i"
+        role="option"
+        :class="i === props.selectedIndex ? 'combo-option option-current' : 'combo-option'"
+        :aria-selected="i === props.selectedIndex ? 'true' : 'false'"
+        @click.stop="(event) => handleOptionClick(i, event)"
+        @mousedown="handleOptionMouseDown"
+      >{{ option }}</div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+  /*.custom-select {
+    position: relative;
+    width: 100%;
+    text-align: left;
+    outline: none;
+    height: 47px;
+    line-height: 47px;
+  }
+
+  .custom-select .selected {
+    background-color: #0a0a0a;
+    border-radius: 6px;
+    border: 1px solid #666666;
+    color: #fff;
+    padding-left: 1em;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .custom-select .selected.open {
+    border: 1px solid #ad8225;
+    border-radius: 6px 6px 0px 0px;
+  }
+
+  .custom-select .selected:after {
+    position: absolute;
+    content: "";
+    top: 22px;
+    right: 1em;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-color: #fff transparent transparent transparent;
+  }
+
+  .custom-select .items {
+    color: #fff;
+    border-radius: 0px 0px 6px 6px;
+    overflow: hidden;
+    border-right: 1px solid #ad8225;
+    border-left: 1px solid #ad8225;
+    border-bottom: 1px solid #ad8225;
+    position: absolute;
+    background-color: #0a0a0a;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+
+  .custom-select .items div {
+    color: #fff;
+    padding-left: 1em;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .custom-select .items div:hover {
+    background-color: #ad8225;
+  }
+
+  .selectHide {
+    display: none;
+  }*/
+
+  .combo *,
+  .combo *::before,
+  .combo *::after {
+    box-sizing: border-box;
+  }
+
+  .combo {
+    display: block;
+    margin-bottom: 1.5em;
+    max-width: 400px;
+    position: relative;
+  }
+
+  .combo::after {
+    border-bottom: 2px solid rgb(0 0 0 / 75%);
+    border-right: 2px solid rgb(0 0 0 / 75%);
+    content: "";
+    display: block;
+    height: 12px;
+    pointer-events: none;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translate(0, -65%) rotate(45deg);
+    width: 12px;
+  }
+
+  .combo-input {
+    background-color: #f5f5f5;
+    border: 2px solid rgb(0 0 0 / 75%);
+    border-radius: 4px;
+    display: block;
+    font-size: 1em;
+    min-height: calc(1.4em + 26px);
+    padding: 12px 16px 14px;
+    text-align: left;
+    width: 100%;
+  }
+
+  .open .combo-input {
+    border-radius: 4px 4px 0 0;
+  }
+
+  .combo-input:focus {
+    border-color: #0067b8;
+    box-shadow: 0 0 4px 2px #0067b8;
+    outline: 4px solid transparent;
+  }
+
+  .combo-label {
+    display: block;
+    font-size: 20px;
+    font-weight: 100;
+    margin-bottom: 0.25em;
+  }
+
+  .combo-menu {
+    background-color: #f5f5f5;
+    border: 1px solid rgb(0 0 0 / 75%);
+    border-radius: 0 0 4px 4px;
+    display: none;
+    max-height: 300px;
+    overflow-y: scroll;
+    left: 0;
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    z-index: 100;
+  }
+
+  .open .combo-menu {
+    display: block;
+  }
+
+  .combo-option {
+    padding: 10px 12px 12px;
+  }
+
+  .combo-option:hover {
+    background-color: rgb(0 0 0 / 10%);
+  }
+
+  .combo-option.option-current {
+    outline: 3px solid #0067b8;
+    outline-offset: -3px;
+  }
+
+  .combo-option[aria-selected="true"] {
+    padding-right: 30px;
+    position: relative;
+  }
+
+  .combo-option[aria-selected="true"]::after {
+    border-bottom: 2px solid #000;
+    border-right: 2px solid #000;
+    content: "";
+    height: 16px;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translate(0, -50%) rotate(45deg);
+    width: 8px;
+  }
+</style>
