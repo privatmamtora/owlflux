@@ -3,9 +3,9 @@ import { useErrorStore } from '../stores/error'
 const API_VERSION = 1;
 
 class ConfigurationError extends Error {
-  constructor(message) {
-    super(message);
-  }
+	constructor(message) {
+		super(message);
+	}
 }
 
 class MinifluxApi {
@@ -46,8 +46,17 @@ class MinifluxApi {
 	];
 
 	static get orderOptions() {
-    return MinifluxApi.#orderOptions;
-  }
+		return MinifluxApi.#orderOptions;
+	}
+
+	static #directionOptions = [
+		{ name: 'Descending', value: 'desc'},
+		{ name: 'Ascending', value: 'asc'},
+	];
+
+	static get directionOptions() {
+		return MinifluxApi.#directionOptions;
+	}
 
 	async apiCall(method, url, body = null) {
 		const params = { headers: { 'X-Auth-Token': this._api_key } };
