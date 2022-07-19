@@ -69,9 +69,17 @@ export const useEntriesStore = defineStore({
             console.log('Loading More...');
           }
         }
-
+        // Load entries after current items
         if(this.entries && this.entries.length) {
           options['offset'] = this.entries.length;
+        }
+
+        // Update options from settingsStore
+        if (settingsStore.settings['orderBy']) {
+          options.order = settingsStore.settings['orderBy'];
+        }
+        if (settingsStore.settings['direction']) {
+          options.order = settingsStore.settings['direction'];
         }
 
         let miniflux = new MinifluxApi(settingsStore.settings.host, settingsStore.settings.key);
