@@ -38,7 +38,7 @@ let list = ref(null);
 
 // state
 let activeIndex = 0;
-let open = false;
+let open = ref(false);
 let searchString = '';
 let searchTimeout = null;
 let ignoreBlur = null;
@@ -54,21 +54,21 @@ let onBlur = () => {
     return;
   }
 
-  if (open) {
+  if (open.value) {
     selectOption(activeIndex);
     updateMenuState(false, false);
   }
 }
 
 let handleClick = () => {
-  updateMenuState(!open, false);
+  updateMenuState(!open.value, false);
 }
 
 let handleKeyEvent = (e) => {
   const { key } = e;
   const max = props.options.length - 1;
 
-  const action = getActionFromKey(e, open);
+  const action = getActionFromKey(e, open.value);
 
   switch (action) {
     case SelectActions.Last:
@@ -180,19 +180,19 @@ function selectOption(index) {
 }
 
 function updateMenuState(openState, callFocus = true) {
-  if (open === openState) {
+  if (open.value === openState) {
     return;
   }
 
   // update state
-  open = openState;
+  open.value = openState;
 
   // update aria-expanded and styles
-  combo.value.setAttribute('aria-expanded', `${open}`);
-  open ? select.value.classList.add('open') : select.value.classList.remove('open');
+  combo.value.setAttribute('aria-expanded', `${open.value}`);
+  open.value ? select.value.classList.add('open') : select.value.classList.remove('open');
 
   // update activedescendant
-  const activeID = open ? `${comboId}-${activeIndex}` : '';
+  const activeID = open.value ? `${comboId}-${activeIndex}` : '';
   combo.value.setAttribute('aria-activedescendant', activeID);
 
   if (activeID === '' && !isElementInView(combo.value)) {
@@ -221,25 +221,6 @@ function getSearchString (char) {
 
 </script>
 <template>
-  <!-- <div class="custom-select" :tabindex="tabindex" @blur="open = false">
-    <div class="selected" :class="{ open: open }" @click="open = !open">
-      {{ selected }}
-    </div>
-    <div class="items" :class="{ selectHide: !open }">
-      <div
-        v-for="(option, i) of options"
-        :key="i"
-        @click="
-          selected = option;
-          open = false;
-          $emit('input', option);
-        "
-      >
-        {{ option }}
-      </div>
-    </div>
-  </div> -->
-
   <label :id="comboId + '-label'" class="combo-label">{{ props.label }}</label>
   <div class="combo js-select" ref="select">
     <div
@@ -257,28 +238,31 @@ function getSearchString (char) {
       @click.stop="handleClick"
       @keydown.stop="handleKeyEvent">
     </div>
-    <div
-      class="combo-menu"
-      :id="comboId+'-list'"
-      role="listbox"
-      tabindex="-1"
-      :aria-labelledby="comboId + '-label'"
-      ref="list">
+    <transition name="slide-down">
       <div
-        v-for="(option, i) of props.options"
-        :key="i"
-        :id="comboId+'-'+i"
-        role="option"
-        :class="i === props.selectedIndex ? 'combo-option option-current' : 'combo-option'"
-        :aria-selected="i === props.selectedIndex ? 'true' : 'false'"
-        @click.stop="(event) => handleOptionClick(i, event)"
-        @mousedown="handleOptionMouseDown"
-      >{{ option }}</div>
-    </div>
+        v-if="open"
+        class="combo-menu"
+        :id="comboId+'-list'"
+        role="listbox"
+        tabindex="-1"
+        :aria-labelledby="comboId + '-label'"
+        ref="list">
+        <div
+          v-for="(option, i) of props.options"
+          :key="i"
+          :id="comboId+'-'+i"
+          role="option"
+          :class="i === props.selectedIndex ? 'combo-option option-current' : 'combo-option'"
+          :aria-selected="i === props.selectedIndex ? 'true' : 'false'"
+          @click.stop="(event) => handleOptionClick(i, event)"
+          @mousedown="handleOptionMouseDown"
+        >{{ option }}</div>
+      </div>
+    </transition>
   </div>
 </template>
 
-<style scoped>
+<style>
   .combo *,
   .combo *::before,
   .combo *::after {
@@ -293,8 +277,10 @@ function getSearchString (char) {
   }
 
   .combo::after {
-    border-bottom: 2px solid rgb(0 0 0 / 75%);
-    border-right: 2px solid rgb(0 0 0 / 75%);
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-right-style: solid;
+    border-bottom-style: solid;
     content: "";
     display: block;
     height: 12px;
@@ -312,8 +298,8 @@ function getSearchString (char) {
   }
 
   .combo-input {
-    background-color: #f5f5f5;
-    border: 2px solid rgb(0 0 0 / 75%);
+    border-width: 2px;
+    border-style: solid;
     border-radius: 4px;
     display: block;
     font-size: 1em;
@@ -339,11 +325,11 @@ function getSearchString (char) {
   }
 
   .combo-menu {
-    background-color: #f5f5f5;
-    border: 1px solid rgb(0 0 0 / 75%);
+    background-color: rgb(var(--v-theme-on-surface-variant));
+    border-width: 1px;
+    border-style: solid;
+
     border-radius: 0 0 4px 4px;
-    display: none;
-    max-height: 300px;
     overflow-y: scroll;
     left: 0;
     position: absolute;
@@ -352,8 +338,36 @@ function getSearchString (char) {
     z-index: 100;
   }
 
-  .open .combo-menu {
-    display: block;
+  @keyframes slideInDown {
+    from {
+      visibility: visible;
+      max-height: 0px;
+    }
+
+    to {
+      max-height: 300px;
+    }
+  }
+  @keyframes slideInUp {
+    from {
+      visibility: visible;
+      max-height: 300px;
+    }
+
+    to {
+      max-height: 0px;
+    }
+  }
+
+  .slide-down-enter-active {
+    animation-name: slideInDown;
+    animation-duration: 0.15s;
+    animation-timing-function: ease-in-out;
+  }
+  .slide-down-leave-active {
+    animation-name: slideInUp;
+    animation-duration: 0.25s;
+    animation-timing-function: ease-in-out;
   }
 
   .combo-option {
@@ -365,7 +379,8 @@ function getSearchString (char) {
   }
 
   .combo-option.option-current {
-    outline: 3px solid #0067b8;
+    outline-width: 3px;
+    outline-style: solid;
     outline-offset: -3px;
   }
 
@@ -375,8 +390,10 @@ function getSearchString (char) {
   }
 
   .combo-option[aria-selected="true"]::after {
-    border-bottom: 2px solid #000;
-    border-right: 2px solid #000;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-right-width: 2px;
+    border-right-style: solid;
     content: "";
     height: 16px;
     position: absolute;
