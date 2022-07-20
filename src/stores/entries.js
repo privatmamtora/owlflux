@@ -56,7 +56,7 @@ export const useEntriesStore = defineStore({
     async loadMore() {
       try {
         const settingsStore = useSettingsStore();
-        let options = { 'limit': 25, 'order': 'published_at', 'direction': 'desc' };
+        let options = { 'limit': 25, 'order': 'published_at', 'direction': 'desc', 'status': ['unread'] };
 
         if (this.total === -1) {
           console.log('First Load');
@@ -80,6 +80,9 @@ export const useEntriesStore = defineStore({
         }
         if (settingsStore.settings['direction']) {
           options.direction = settingsStore.settings['direction'];
+        }
+        if (settingsStore.settings['status']) {
+          options.status = settingsStore.settings['status'];
         }
 
         let miniflux = new MinifluxApi(settingsStore.settings.host, settingsStore.settings.key);

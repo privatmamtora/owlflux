@@ -58,6 +58,28 @@ class MinifluxApi {
 		return MinifluxApi.#directionOptions;
 	}
 
+	static #statusOptions = [
+		{ name: 'Unread Only', value: ['unread']},
+		{ name: 'All', value: ['unread', 'read']},
+	];
+
+	static get statusOptions() {
+		return MinifluxApi.#statusOptions;
+	}
+
+	#buildQueryString(filters) {
+		let queryString = Object.keys(filters).map(key => {
+			if(Array.isArray(filters[key])) {
+				return filters[key].map(value => {
+					return key + '=' + value;
+				}).join('&');
+			} else {
+				return key + '=' + filters[key];
+			}
+		}).join('&');
+		return queryString;
+	}
+
 	async apiCall(method, url, body = null) {
 		const params = { headers: { 'X-Auth-Token': this._api_key } };
 		if (body) {
@@ -239,7 +261,7 @@ class MinifluxApi {
 	 */
 	async getFeedEntries(feed_id, filters) {
 		let url = this.#getEndpoint(`feeds/${feed_id}/entries`);
-		var queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
+		let queryString = this.#buildQueryString(filters);
 		if (queryString) {
 			url = url + '?' + queryString;
 		}
@@ -260,7 +282,7 @@ class MinifluxApi {
 	 */
 	async getEntries(filters) {
 		let url = this.#getEndpoint(`entries`);
-		var queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
+		let queryString = this.#buildQueryString(filters);
 		if (queryString) {
 			url = url + '?' + queryString;
 		}
@@ -356,7 +378,7 @@ class MinifluxApi {
 	 */
 	async getCategoryEntries(category_id, filters) {
 		let url = this.#getEndpoint(`categories/${category_id}/entries`);
-		var queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
+		let queryString = this.#buildQueryString(filters);
 		if (queryString) {
 			url = url + '?' + queryString;
 		}

@@ -17,6 +17,11 @@ if (settingsStore.settings['direction']) {
   directionSelected = MinifluxApi.directionOptions.findIndex(o => o.value === settingsStore.settings['direction']);
 }
 
+let statusSelected = 0;
+if (settingsStore.settings['status'] && settingsStore.settings['status'].length) {
+  statusSelected = MinifluxApi.statusOptions.findIndex(o => JSON.stringify(o.value) === JSON.stringify(settingsStore.settings['status']));
+}
+
 function orderUpdated(index) {
   let newOrder = MinifluxApi.orderOptions[index].value;
   if (settingsStore.settings['orderBy'] !== newOrder) {
@@ -31,19 +36,17 @@ function directionUpdated(index) {
   }
 }
 
+function statusUpdated(index) {
+  let newValue = MinifluxApi.statusOptions[index].value;
+  if (JSON.stringify(settingsStore.settings['status']) !== JSON.stringify(newValue)) {
+    settingsStore.settings['status'] = newValue;
+  }
+}
+
 </script>
 
 <template>
   <v-container>
-    <div>List</div>
-    <v-select
-      label="Sort Order"
-      variant="outlined"
-      shaped
-      :value="MinifluxApi.orderOptions[0]"
-      :items="MinifluxApi.orderOptions"
-      item-title="name"
-      item-value="value"></v-select>
     <CustomSelect
       :options="MinifluxApi.orderOptions.map(o => o.name)"
       @update:selected="orderUpdated"
@@ -55,6 +58,12 @@ function directionUpdated(index) {
       @update:selected="directionUpdated"
       label="Sort Direction"
       :selectedIndex="directionSelected">
+    </CustomSelect>
+    <CustomSelect
+      :options="MinifluxApi.statusOptions.map(o => o.name)"
+      @update:selected="statusUpdated"
+      label="Entries Visible"
+      :selectedIndex="statusSelected">
     </CustomSelect>
   </v-container>
 </template>
