@@ -92,7 +92,6 @@ class MinifluxApi {
 						errorStore.setError(e, e.status + ': ' + r['error_message'], 'Response Error')
 					} else {
 						let r = await e.text();
-
 						errorStore.setError(e, e.status + ': ' + r, 'Response Error')
 					}
 				} else if (typeof e === 'object') {

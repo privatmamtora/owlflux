@@ -79,7 +79,7 @@ export const useEntriesStore = defineStore({
           options.order = settingsStore.settings['orderBy'];
         }
         if (settingsStore.settings['direction']) {
-          options.order = settingsStore.settings['direction'];
+          options.direction = settingsStore.settings['direction'];
         }
 
         let miniflux = new MinifluxApi(settingsStore.settings.host, settingsStore.settings.key);
@@ -97,6 +97,9 @@ export const useEntriesStore = defineStore({
           data = await miniflux.getEntries(options);
         }
 
+        if (!data) {
+          throw new Error('Failed to load new Entries');
+        }
         // console.log(this.entries);
         Array.prototype.push.apply(this.entries, data.entries);
         if (this.total === -1) {
